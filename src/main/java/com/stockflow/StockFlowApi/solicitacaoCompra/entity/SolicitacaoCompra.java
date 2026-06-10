@@ -1,7 +1,7 @@
 package com.stockflow.StockFlowApi.solicitacaoCompra.entity;
 
 import com.stockflow.StockFlowApi.shared.enums.StatusSolicitacao;
-import com.stockflow.StockFlowApi.usuario.entity.Usuario;
+import com.stockflow.StockFlowApi.usuario.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,7 +24,7 @@ public class SolicitacaoCompra {
 
     @ManyToOne
     @JoinColumn(name = "usuario_id")
-    private Usuario usuario;
+    private User user;
 
     private String observacao;
     private LocalDateTime data;

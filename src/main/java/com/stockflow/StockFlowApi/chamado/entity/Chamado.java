@@ -2,7 +2,7 @@ package com.stockflow.StockFlowApi.chamado.entity;
 
 import com.stockflow.StockFlowApi.chamado.enums.StatusChamado;
 import com.stockflow.StockFlowApi.chamado.enums.TipoChamado;
-import com.stockflow.StockFlowApi.usuario.entity.Usuario;
+import com.stockflow.StockFlowApi.usuario.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,7 +22,7 @@ public class Chamado {
 
     @ManyToOne
     @JoinColumn(name = "usuario_id")
-    private Usuario usuario;
+    private User user;
 
     @Enumerated
     private TipoChamado tipoChamado;

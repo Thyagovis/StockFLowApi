@@ -4,16 +4,14 @@ import com.stockflow.StockFlowApi.shared.enums.StatusSolicitacao;
 import com.stockflow.StockFlowApi.solicitacaoCompra.dto.SolicitacaoCompraRequestDTO;
 import com.stockflow.StockFlowApi.solicitacaoCompra.entity.SolicitacaoCompra;
 import com.stockflow.StockFlowApi.solicitacaoCompra.repository.SolicitacaoCompraRepository;
-import com.stockflow.StockFlowApi.usuario.entity.Usuario;
+import com.stockflow.StockFlowApi.usuario.entity.User;
 import com.stockflow.StockFlowApi.usuario.repository.UsuarioRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.security.spec.RSAOtherPrimeInfo;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -31,13 +29,13 @@ public class SolicitacaoCompraService {
 
         System.out.println("Chegou no service");
 
-        Usuario usuario = usuarioRepository
+        User user = usuarioRepository
                 .findById(dto.usuario_id())
                 .orElseThrow();
 
         SolicitacaoCompra solicitacaoCompra = new SolicitacaoCompra();
 
-        solicitacaoCompra.setUsuario(usuario);
+        solicitacaoCompra.setUser(user);
         solicitacaoCompra.setData(LocalDateTime.now());
         solicitacaoCompra.setStatusSolicitacao(StatusSolicitacao.ABERTA);
         solicitacaoCompra.setObservacao(dto.obs());
