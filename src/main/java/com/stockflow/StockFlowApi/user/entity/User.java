@@ -1,6 +1,6 @@
-package com.stockflow.StockFlowApi.usuario.entity;
+package com.stockflow.StockFlowApi.user.entity;
 
-import com.stockflow.StockFlowApi.usuario.enums.Role;
+import com.stockflow.StockFlowApi.user.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,7 +13,6 @@ import java.util.Collection;
 import java.util.List;
 
 @Data
-@AllArgsConstructor
 @Entity
 @Table(name = "usuarios")
 public class User implements UserDetails {
@@ -46,6 +45,14 @@ public class User implements UserDetails {
     private boolean active = true;
 
     protected  User() {
+    }
+
+    public User(String name, String email, String login, String password, Role role) {
+        this.name = name;
+        this.email = email;
+        this.login = login;
+        this.password = password;
+        this.role = role;
     }
 
     @Override

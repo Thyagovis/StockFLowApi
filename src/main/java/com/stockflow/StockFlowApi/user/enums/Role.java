@@ -1,4 +1,4 @@
-package com.stockflow.StockFlowApi.usuario.enums;
+package com.stockflow.StockFlowApi.user.enums;
 
 public enum Role {
     ADMINISTRADOR,

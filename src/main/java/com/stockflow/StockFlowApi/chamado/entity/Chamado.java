@@ -2,7 +2,7 @@ package com.stockflow.StockFlowApi.chamado.entity;
 
 import com.stockflow.StockFlowApi.chamado.enums.StatusChamado;
 import com.stockflow.StockFlowApi.chamado.enums.TipoChamado;
-import com.stockflow.StockFlowApi.usuario.entity.User;
+import com.stockflow.StockFlowApi.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

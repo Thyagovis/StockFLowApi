@@ -21,12 +21,13 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) {
 
         return http
-//                CSRF, desative apenas em ambiente de testes
+//                CSRF, desative apenas em ambiente de testes, geralmente resolve problema de endpoint bloqueados
 //                .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/register").authenticated()
+//                        Liberados temporariamente para fims de testes
+                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
                         .anyRequest().permitAll()
                 )
                 .build();
