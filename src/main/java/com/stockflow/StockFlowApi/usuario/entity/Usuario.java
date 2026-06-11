@@ -4,6 +4,7 @@ import com.stockflow.StockFlowApi.usuario.enums.Cargo;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SQLDelete;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -13,6 +14,7 @@ import java.util.List;
 
 @Data
 @Entity
+@SQLDelete(sql = "UPDATE usuario SET ativo = false WHERE id = ?")
 public class Usuario implements UserDetails {
 
     @Id
