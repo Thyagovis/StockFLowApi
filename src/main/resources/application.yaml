@@ -1,13 +1,22 @@
 spring:
+  config:
+    import: file:.env[.properties]
+
   application:
     name: StockFlowApi
 
   datasource:
-    url: jdbc:postgresql://ep-bold-cherry-acx0x5qy-pooler.sa-east-1.aws.neon.tech/StockFlowTESTDB?sslmode=require&channelBinding=require
-    username: neondb_owner
-    password: npg_u7cwxOkPUFY3
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
 
   jpa:
     show-sql: true
     hibernate:
       ddl-auto: update
+
+security:
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration: 86400
+    issuer: StockFlowApi

@@ -2,10 +2,11 @@ package com.stockflow.StockFlowApi.usuario.entity;
 
 import com.stockflow.StockFlowApi.usuario.enums.Cargo;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SQLDelete;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
@@ -13,8 +14,8 @@ import java.util.Collection;
 import java.util.List;
 
 @Data
-@AllArgsConstructor
 @Entity
+@SQLDelete(sql = "UPDATE usuario SET ativo = false WHERE id = ?")
 public class Usuario implements UserDetails {
 
     @Id
@@ -47,9 +48,19 @@ public class Usuario implements UserDetails {
     protected Usuario() {
     }
 
+    public Usuario(String nome, String email, String login, String senha, Cargo cargo) {
+        this.nome = nome;
+        this.email = email;
+        this.login = login;
+        this.senha = senha;
+        this.cargo = cargo;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return List.of(
+                new SimpleGrantedAuthority("ROLE_"+cargo.name())
+        );
     }
 
     @Override
@@ -79,7 +90,7 @@ public class Usuario implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return ativo;
     }
 
 }
