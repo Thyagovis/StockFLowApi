@@ -2,6 +2,7 @@ package com.stockflow.StockFlowApi.usuario.entity;
 
 import com.stockflow.StockFlowApi.usuario.enums.Cargo;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
@@ -14,6 +15,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Data
+@AllArgsConstructor
 @Entity
 @SQLDelete(sql = "UPDATE usuario SET ativo = false WHERE id = ?")
 public class Usuario implements UserDetails {

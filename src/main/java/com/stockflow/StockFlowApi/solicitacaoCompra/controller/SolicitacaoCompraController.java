@@ -36,7 +36,7 @@ public class SolicitacaoCompraController {
     }
 
     @PostMapping
-    public ResponseEntity<SolicitacaoCompra> save(@RequestBody SolicitacaoCompraRequestDTO dto){
+    public ResponseEntity<SolicitacaoCompraResponseDTO> save(@RequestBody SolicitacaoCompraRequestDTO dto){
         return new ResponseEntity<>(solicitacaoCompraService.save(dto), HttpStatus.CREATED);
     }
 

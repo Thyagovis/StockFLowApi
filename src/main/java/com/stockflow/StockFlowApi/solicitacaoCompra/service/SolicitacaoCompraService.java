@@ -1,5 +1,8 @@
 package com.stockflow.StockFlowApi.solicitacaoCompra.service;
 
+import com.stockflow.StockFlowApi.produto.entity.Produto;
+import com.stockflow.StockFlowApi.produto.repository.ProdutoRepository;
+import com.stockflow.StockFlowApi.produto.service.ProdutoService;
 import com.stockflow.StockFlowApi.shared.enums.StatusSolicitacao;
 import com.stockflow.StockFlowApi.solicitacaoCompra.dto.item.ItemSolicitacaoCompraRequestDTO;
 import com.stockflow.StockFlowApi.solicitacaoCompra.dto.solicitacao.SolicitacaoCompraRequestDTO;
@@ -31,6 +34,7 @@ public class SolicitacaoCompraService {
     private final SolicitacaoCompraRepository solicitacaoCompraRepository;
     private final ItemSolicitacaoCompraRepository itemSolicitacaoCompraRepository;
     private final UsuarioRepository usuarioRepository;
+    private final ProdutoRepository produtoRepository;
 
 
 
@@ -56,7 +60,7 @@ public class SolicitacaoCompraService {
 
 
 
-    public SolicitacaoCompra save(SolicitacaoCompraRequestDTO dto){
+    public SolicitacaoCompraResponseDTO save(SolicitacaoCompraRequestDTO dto){
 
         Usuario usuario = usuarioRepository
                 .findById(dto.usuario_id())
@@ -77,15 +81,22 @@ public class SolicitacaoCompraService {
         for(ItemSolicitacaoCompraRequestDTO itemSolicitacaoDTO : dto.itensCompra()){
 
             ItemSolicitacaoCompra itemSolicitacaoCompra = new ItemSolicitacaoCompra();
+            Produto produto = produtoRepository
+                    .findById(itemSolicitacaoDTO.produto_id())
+                    .orElseThrow(() -> new ResponseStatusException(
+                            HttpStatus.NOT_FOUND,
+                            "Produto não encontrado"
+                    ));
 
             itemSolicitacaoCompra.setSolicitacaoCompra(solicitacaoCompra);
             itemSolicitacaoCompra.setQuantidadeSolicitada(itemSolicitacaoDTO.quantidadeSolicitada());
             itemSolicitacaoCompra.setObservacao(itemSolicitacaoDTO.observacao());
-            // ainda nao implementado os services de produto;
-            // itemSolicitacaoCompra.setProduto(produto);
+            itemSolicitacaoCompra.setProduto(produto);
+
+            itemSolicitacaoCompraRepository.save(itemSolicitacaoCompra);
 
         }
-        return solicitacaoCompra;
+        return definirDTO(solicitacaoCompra);
     }
 
 
@@ -176,6 +187,4 @@ public class SolicitacaoCompraService {
 
         return definirDTO(solicitacaoCompra);
     }
-
-
 }
