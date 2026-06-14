@@ -87,7 +87,7 @@ public class SolicitacaoRetiradaService {
 
 
 
-    public SolicitacaoRetiradaDetalhadaResponseDTO save(SolicitacaoRetiradaRequestDTO dto){
+    public SolicitacaoRetiradaSimplificadaResponseDTO save(SolicitacaoRetiradaRequestDTO dto){
 
         SolicitacaoRetirada solicitacaoRetirada = new SolicitacaoRetirada();
 
@@ -123,15 +123,17 @@ public class SolicitacaoRetiradaService {
             solicitacaoItemRetiradaRepository.save(solicitacaoItemRetirada);
         }
 
-        return definirDTO(solicitacaoRetirada);
-    };
+        return definirSimplesDTO(solicitacaoRetirada);
+    }
 
 
 
-    public void delete(Long id){
+    public String delete(Long id){
 
         SolicitacaoRetirada solicitacaoRetirada = findEntityByid(id);
         solicitacaoRetiradaRepository.delete(solicitacaoRetirada);
+
+        return "Solicitação removida com sucesso";
     }
 
 
@@ -181,7 +183,7 @@ public class SolicitacaoRetiradaService {
 
 
 
-    public SolicitacaoRetirada aprovar(Long id){
+    public SolicitacaoRetiradaSimplificadaResponseDTO aprovar(Long id){
 
         SolicitacaoRetirada solicitacaoRetirada = findEntityByid(id);
 
@@ -194,12 +196,12 @@ public class SolicitacaoRetiradaService {
         solicitacaoRetirada.setStatusSolicitacao(StatusSolicitacao.APROVADA);
         solicitacaoRetiradaRepository.save(solicitacaoRetirada);
 
-        return solicitacaoRetirada;
+        return definirSimplesDTO(solicitacaoRetirada);
     }
 
 
 
-    public SolicitacaoRetirada rejeitar(Long id){
+    public SolicitacaoRetiradaSimplificadaResponseDTO rejeitar(Long id){
 
         SolicitacaoRetirada solicitacaoRetirada = findEntityByid(id);
 
@@ -212,6 +214,6 @@ public class SolicitacaoRetiradaService {
         solicitacaoRetirada.setStatusSolicitacao(StatusSolicitacao.APROVADA);
         solicitacaoRetiradaRepository.save(solicitacaoRetirada);
 
-        return solicitacaoRetirada;
+        return definirSimplesDTO(solicitacaoRetirada);
     }
 }

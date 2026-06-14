@@ -1,6 +1,9 @@
 package com.stockflow.StockFlowApi.solicitacaoRetirada.controller;
 
+import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.item.SolicitacaoItemRetiradaResponseDTO;
+import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.item.SolicitacaoItemRetiradaUpdateRequestDTO;
 import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.solicitacao.SolicitacaoRetiradaDetalhadaResponseDTO;
+import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.solicitacao.SolicitacaoRetiradaRequestDTO;
 import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.solicitacao.SolicitacaoRetiradaSimplificadaResponseDTO;
 import com.stockflow.StockFlowApi.solicitacaoRetirada.service.SolicitacaoRetiradaService;
 import lombok.AllArgsConstructor;
@@ -27,5 +30,28 @@ public class SolicitacaoRetiradaController {
         return new ResponseEntity<>(solicitacaoRetiradaService.findAll(), HttpStatus.OK);
     }
 
+    @PostMapping
+    public ResponseEntity<SolicitacaoRetiradaSimplificadaResponseDTO> save(@RequestBody SolicitacaoRetiradaRequestDTO dto){
+        return new ResponseEntity<>(solicitacaoRetiradaService.save(dto), HttpStatus.CREATED);
+    }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> delete(@PathVariable Long id){
+        return new ResponseEntity<>(solicitacaoRetiradaService.delete(id), HttpStatus.NO_CONTENT);
+    }
+
+    @PutMapping("/item")
+    public ResponseEntity<SolicitacaoItemRetiradaResponseDTO> putItem(@RequestBody SolicitacaoItemRetiradaUpdateRequestDTO dto){
+        return new ResponseEntity<>(solicitacaoRetiradaService.updateItem(dto), HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}/aprovar")
+    public ResponseEntity<SolicitacaoRetiradaSimplificadaResponseDTO> aprovar(@PathVariable Long id){
+        return new ResponseEntity<>(solicitacaoRetiradaService.aprovar(id), HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}/rejeitar")
+    public ResponseEntity<SolicitacaoRetiradaSimplificadaResponseDTO> rejeitar(@PathVariable Long id){
+        return new ResponseEntity<>(solicitacaoRetiradaService.rejeitar(id), HttpStatus.OK);
+    }
 }
