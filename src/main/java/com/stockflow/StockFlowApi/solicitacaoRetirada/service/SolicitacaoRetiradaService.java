@@ -5,7 +5,6 @@ import com.stockflow.StockFlowApi.produto.repository.ProdutoRepository;
 import com.stockflow.StockFlowApi.shared.enums.StatusSolicitacao;
 import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.item.SolicitacaoItemRetiradaRequestDTO;
 import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.item.SolicitacaoItemRetiradaResponseDTO;
-import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.item.SolicitacaoItemRetiradaUpdateRequestDTO;
 import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.solicitacao.SolicitacaoRetiradaRequestDTO;
 import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.solicitacao.SolicitacaoRetiradaDetalhadaResponseDTO;
 import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.solicitacao.SolicitacaoRetiradaSimplificadaResponseDTO;
@@ -138,24 +137,41 @@ public class SolicitacaoRetiradaService {
 
 
 
-    public SolicitacaoItemRetiradaResponseDTO updateItem(SolicitacaoItemRetiradaUpdateRequestDTO dto){
+    public SolicitacaoItemRetiradaResponseDTO updateItem(Long idItem, SolicitacaoItemRetiradaRequestDTO dto){
 
         SolicitacaoItemRetirada solicitacaoItemRetirada = solicitacaoItemRetiradaRepository
-                .findById(dto.SolicitacaoItemId())
+                .findById(idItem)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
                         "Item de retirada não encontrado"
                 ));
 
-        Produto produto = produtoRepository
-                .findById(dto.produto_id())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Produto não encontrado"
-                ));
+        SolicitacaoRetiradaDetalhadaResponseDTO retiradaResponseDTO = findById(
+                solicitacaoItemRetirada
+                .getSolicitacaoRetirada()
+                .getId()
+        );
 
-        solicitacaoItemRetirada.setQuantidade(dto.quantidade());
-        solicitacaoItemRetirada.setProduto(produto);
+        if(retiradaResponseDTO.statusSolicitacao() != StatusSolicitacao.ABERTA){
+            throw new IllegalStateException(
+                    "A solicitação só pode ser alterada enquanto estiver em ABERTO"
+            );
+        }
+
+        if(dto.produto_id() != null){
+            Produto produto = produtoRepository
+                    .findById(dto.produto_id())
+                    .orElseThrow(() -> new ResponseStatusException(
+                            HttpStatus.NOT_FOUND,
+                            "Produto não encontrado"
+                    ));
+
+            solicitacaoItemRetirada.setProduto(produto);
+        }
+
+        if(dto.quantidade() != null){
+            solicitacaoItemRetirada.setQuantidade(dto.quantidade());
+        }
 
         solicitacaoItemRetiradaRepository.save(solicitacaoItemRetirada);
 
