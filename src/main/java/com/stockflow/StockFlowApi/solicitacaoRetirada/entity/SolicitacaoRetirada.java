@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -25,6 +26,13 @@ public class SolicitacaoRetirada {
     @ManyToOne
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
+
+    @OneToMany(
+            mappedBy = "SolicitacaoRetirada",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<SolicitacaoItemRetirada> itemSolicitacaoRetirada;
 
     private LocalDateTime data;
     private String justificativa;

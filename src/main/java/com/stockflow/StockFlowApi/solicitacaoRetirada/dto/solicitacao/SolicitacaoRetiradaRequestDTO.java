@@ -1,4 +1,4 @@
-package com.stockflow.StockFlowApi.solicitacaoRetirada.dto;
+package com.stockflow.StockFlowApi.solicitacaoRetirada.dto.solicitacao;
 
 import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.item.SolicitacaoItemRetiradaRequestDTO;
 
