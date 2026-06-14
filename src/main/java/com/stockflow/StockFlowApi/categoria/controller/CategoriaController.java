@@ -1,6 +1,7 @@
 package com.stockflow.StockFlowApi.categoria.controller;
 
-import com.stockflow.StockFlowApi.categoria.entity.Categoria;
+import com.stockflow.StockFlowApi.categoria.dto.CategoriaRequestDTO;
+import com.stockflow.StockFlowApi.categoria.dto.CategoriaResponseDTO;
 import com.stockflow.StockFlowApi.categoria.service.CategoriaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -14,28 +15,33 @@ public class CategoriaController {
 
     private final CategoriaService categoriaService;
 
+    
     @GetMapping
-    public List<Categoria> listarTodas() {
+    public List<CategoriaResponseDTO> listarTodas() {
         return categoriaService.listarTodas();
     }
 
+
     @GetMapping("/{id}")
-    public Categoria buscarPorId(@PathVariable Long id) {
+    public CategoriaResponseDTO buscarPorId(@PathVariable Long id) {
         return categoriaService.buscarPorId(id);
     }
 
+
     @PostMapping
-    public Categoria criar(@RequestBody Categoria categoria) {
-        return categoriaService.criar(categoria);
+    public CategoriaResponseDTO criar(@RequestBody CategoriaRequestDTO dto) {
+        return categoriaService.criar(dto);
     }
+
 
     @PutMapping("/{id}")
-    public Categoria atualizar(
+    public CategoriaResponseDTO atualizar(
             @PathVariable Long id,
-            @RequestBody Categoria categoria) {
+            @RequestBody CategoriaRequestDTO dto) {
 
-        return categoriaService.atualizar(id, categoria);
+        return categoriaService.atualizar(id, dto);
     }
+
 
     @DeleteMapping("/{id}")
     public void deletar(@PathVariable Long id) {

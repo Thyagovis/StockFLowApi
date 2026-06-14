@@ -4,5 +4,4 @@ public record CategoriaRequestDTO(
         String name,
         String description,
         boolean isAtivo
-){
-}
+){}

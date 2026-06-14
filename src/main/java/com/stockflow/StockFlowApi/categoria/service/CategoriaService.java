@@ -1,5 +1,7 @@
 package com.stockflow.StockFlowApi.categoria.service;
 
+import com.stockflow.StockFlowApi.categoria.dto.CategoriaRequestDTO;
+import com.stockflow.StockFlowApi.categoria.dto.CategoriaResponseDTO;
 import com.stockflow.StockFlowApi.categoria.entity.Categoria;
 import com.stockflow.StockFlowApi.categoria.repository.CategoriaRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,41 +16,74 @@ public class CategoriaService {
 
     private final CategoriaRepository categoriaRepository;
 
-    public List<Categoria> listarTodas() {
-        return categoriaRepository.findAll();
+    public List<CategoriaResponseDTO> listarTodas() {
+        return categoriaRepository.findAll()
+                .stream()
+                .map(this::toResponseDTO)
+                .toList();
     }
 
-    public Categoria buscarPorId(Long id) {
+
+    public CategoriaResponseDTO buscarPorId(Long id) {
+        return toResponseDTO(buscarEntityPorId(id));
+    }
+
+
+    public CategoriaResponseDTO criar(CategoriaRequestDTO dto) {
+
+        validar(dto);
+
+        Categoria categoria = new Categoria();
+        categoria.setName(dto.name());
+        categoria.setDescription(dto.description());
+        categoria.setAtivo(dto.isAtivo());
+        categoria.setDataCadastro(LocalDateTime.now());
+
+        return toResponseDTO(categoriaRepository.save(categoria));
+    }
+
+
+    public CategoriaResponseDTO atualizar(Long id, CategoriaRequestDTO dto) {
+
+        validar(dto);
+
+        Categoria categoria = buscarEntityPorId(id);
+
+        categoria.setName(dto.name());
+        categoria.setDescription(dto.description());
+        categoria.setAtivo(dto.isAtivo());
+
+        return toResponseDTO(categoriaRepository.save(categoria));
+    }
+
+
+    public void deletar(Long id) {
+        Categoria categoria = buscarEntityPorId(id);
+        categoriaRepository.delete(categoria);
+    }
+
+
+    private Categoria buscarEntityPorId(Long id) {
         return categoriaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
     }
 
-    public Categoria criar(Categoria categoria) {
 
-        if (categoria.getName() == null || categoria.getName().isBlank()) {
+    private void validar(CategoriaRequestDTO dto) {
+        if (dto.name() == null || dto.name().isBlank()) {
             throw new RuntimeException("Nome da categoria é obrigatório");
         }
-
-        categoria.setDataCadastro(LocalDateTime.now());
-
-        return categoriaRepository.save(categoria);
     }
 
-    public Categoria atualizar(Long id, Categoria dadosAtualizados) {
 
-        Categoria categoria = buscarPorId(id);
-
-        categoria.setName(dadosAtualizados.getName());
-        categoria.setDescription(dadosAtualizados.getDescription());
-        categoria.setAtivo(dadosAtualizados.isAtivo());
-
-        return categoriaRepository.save(categoria);
+    private CategoriaResponseDTO toResponseDTO(Categoria categoria) {
+        return new CategoriaResponseDTO(
+                categoria.getId(),
+                categoria.getName(),
+                categoria.getDescription(),
+                categoria.isAtivo(),
+                categoria.getDataCadastro()
+        );
     }
-
-    public void deletar(Long id) {
-
-        Categoria categoria = buscarPorId(id);
-
-        categoriaRepository.delete(categoria);
-    }
+    
 }

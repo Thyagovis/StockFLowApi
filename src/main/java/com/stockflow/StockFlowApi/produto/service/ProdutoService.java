@@ -2,6 +2,8 @@ package com.stockflow.StockFlowApi.produto.service;
 
 import com.stockflow.StockFlowApi.categoria.entity.Categoria;
 import com.stockflow.StockFlowApi.categoria.repository.CategoriaRepository;
+import com.stockflow.StockFlowApi.produto.dto.ProdutoRequestDTO;
+import com.stockflow.StockFlowApi.produto.dto.ProdutoResponseDTO;
 import com.stockflow.StockFlowApi.produto.entity.Produto;
 import com.stockflow.StockFlowApi.produto.repository.ProdutoRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,49 +19,83 @@ public class ProdutoService {
     private final ProdutoRepository produtoRepository;
     private final CategoriaRepository categoriaRepository;
 
-    public List<Produto> listarTodos() {
-        return produtoRepository.findAll();
+    public List<ProdutoResponseDTO> listarTodos() {
+        return produtoRepository.findAll()
+                .stream()
+                .map(this::toResponseDTO)
+                .toList();
     }
 
-    public Produto buscarPorId(Long id) {
+
+    public ProdutoResponseDTO buscarPorId(Long id) {
+        return toResponseDTO(buscarEntityPorId(id));
+    }
+
+
+    public ProdutoResponseDTO criar(ProdutoRequestDTO dto) {
+
+        validar(dto);
+
+        Categoria categoria = categoriaRepository.findById(dto.categoriaId())
+                .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
+
+        Produto produto = new Produto();
+        produto.setName(dto.name());
+        produto.setDescription(dto.description());
+        produto.setAtivo(dto.ativo());
+        produto.setCategoria(categoria);
+        produto.setDataCadastro(LocalDateTime.now());
+
+        return toResponseDTO(produtoRepository.save(produto));
+    }
+
+
+    public ProdutoResponseDTO atualizar(Long id, ProdutoRequestDTO dto) {
+
+        validar(dto);
+
+        Produto produto = buscarEntityPorId(id);
+
+        Categoria categoria = categoriaRepository.findById(dto.categoriaId())
+                .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
+
+        produto.setName(dto.name());
+        produto.setDescription(dto.description());
+        produto.setAtivo(dto.ativo());
+        produto.setCategoria(categoria);
+
+        return toResponseDTO(produtoRepository.save(produto));
+    }
+
+
+    public void deletar(Long id) {
+        Produto produto = buscarEntityPorId(id);
+        produtoRepository.delete(produto);
+    }
+
+
+    private Produto buscarEntityPorId(Long id) {
         return produtoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
     }
 
-    public Produto criar(Produto produto, Long categoriaId) {
 
-        if (produto.getName() == null || produto.getName().isBlank()) {
+    private void validar(ProdutoRequestDTO dto) {
+        if (dto.name() == null || dto.name().isBlank()) {
             throw new RuntimeException("Nome do produto é obrigatório");
         }
-
-        Categoria categoria = categoriaRepository.findById(categoriaId)
-                .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
-
-        produto.setCategoria(categoria);
-        produto.setDataCadastro(LocalDateTime.now());
-
-        return produtoRepository.save(produto);
     }
 
-    public Produto atualizar(Long id, Produto dadosAtualizados, Long categoriaId) {
 
-        Produto produto = buscarPorId(id);
-
-        Categoria categoria = categoriaRepository.findById(categoriaId)
-                .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
-
-        produto.setName(dadosAtualizados.getName());
-        produto.setDescription(dadosAtualizados.getDescription());
-        produto.setAtivo(dadosAtualizados.isAtivo());
-        produto.setCategoria(categoria);
-
-        return produtoRepository.save(produto);
+    private ProdutoResponseDTO toResponseDTO(Produto produto) {
+        return new ProdutoResponseDTO(
+                produto.getId(),
+                produto.getCategoria() != null ? produto.getCategoria().getId() : null,
+                produto.getName(),
+                produto.getDescription(),
+                produto.isAtivo(),
+                produto.getDataCadastro()
+        );
     }
 
-    public void deletar(Long id) {
-
-        Produto produto = buscarPorId(id);
-
-        produtoRepository.delete(produto);
-    }
 }

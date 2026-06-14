@@ -5,5 +5,4 @@ public record ProdutoRequestDTO(
         String name,
         String description,
         boolean ativo
-) {
-}
+) {}

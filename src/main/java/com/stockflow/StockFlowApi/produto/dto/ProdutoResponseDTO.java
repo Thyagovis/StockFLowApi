@@ -9,5 +9,4 @@ public record ProdutoResponseDTO(
         String description,
         boolean ativo,
         LocalDateTime dataCadastro
-) {
-}
+) {}
