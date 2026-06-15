@@ -3,8 +3,9 @@ package com.stockflow.StockFlowApi.solicitacaoRetirada.service;
 import com.stockflow.StockFlowApi.produto.entity.Produto;
 import com.stockflow.StockFlowApi.produto.repository.ProdutoRepository;
 import com.stockflow.StockFlowApi.shared.enums.StatusSolicitacao;
-import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.item.SolicitacaoItemRetiradaRequestDTO;
+import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.item.SolicitacaoItemRetiradaCreateRequestDTO;
 import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.item.SolicitacaoItemRetiradaResponseDTO;
+import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.item.SolicitacaoItemRetiradaUpdateDTO;
 import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.solicitacao.SolicitacaoRetiradaRequestDTO;
 import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.solicitacao.SolicitacaoRetiradaDetalhadaResponseDTO;
 import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.solicitacao.SolicitacaoRetiradaSimplificadaResponseDTO;
@@ -79,7 +80,7 @@ public class SolicitacaoRetiradaService {
 
         solicitacaoRetirada = solicitacaoRetiradaRepository.save(solicitacaoRetirada);
 
-        for(SolicitacaoItemRetiradaRequestDTO itemDTO : dto.listaItens()){
+        for(SolicitacaoItemRetiradaCreateRequestDTO itemDTO : dto.listaItens()){
 
             SolicitacaoItemRetirada solicitacaoItemRetirada = new SolicitacaoItemRetirada();
 
@@ -112,7 +113,7 @@ public class SolicitacaoRetiradaService {
 
 
 
-    public SolicitacaoItemRetiradaResponseDTO updateItem(Long idItem, SolicitacaoItemRetiradaRequestDTO dto){
+    public SolicitacaoItemRetiradaResponseDTO updateItem(Long idItem, SolicitacaoItemRetiradaUpdateDTO dto){
 
         SolicitacaoItemRetirada solicitacaoItemRetirada = solicitacaoItemRetiradaRepository
                 .findById(idItem)
