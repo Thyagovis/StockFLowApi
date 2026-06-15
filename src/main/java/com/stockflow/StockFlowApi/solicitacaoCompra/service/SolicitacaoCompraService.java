@@ -3,8 +3,9 @@ package com.stockflow.StockFlowApi.solicitacaoCompra.service;
 import com.stockflow.StockFlowApi.produto.entity.Produto;
 import com.stockflow.StockFlowApi.produto.repository.ProdutoRepository;
 import com.stockflow.StockFlowApi.shared.enums.StatusSolicitacao;
-import com.stockflow.StockFlowApi.solicitacaoCompra.dto.item.ItemSolicitacaoCompraRequestDTO;
+import com.stockflow.StockFlowApi.solicitacaoCompra.dto.item.ItemSolicitacaoCompraCreateRequestDTO;
 import com.stockflow.StockFlowApi.solicitacaoCompra.dto.item.ItemSolicitacaoCompraResponseDTO;
+import com.stockflow.StockFlowApi.solicitacaoCompra.dto.item.ItemSolicitacaoCompraUpdateRequestDTO;
 import com.stockflow.StockFlowApi.solicitacaoCompra.dto.solicitacao.SolicitacaoCompraDetalhadaResponseDTO;
 import com.stockflow.StockFlowApi.solicitacaoCompra.dto.solicitacao.SolicitacaoCompraRequestDTO;
 import com.stockflow.StockFlowApi.solicitacaoCompra.dto.solicitacao.SolicitacaoCompraSimplesResponseDTO;
@@ -73,7 +74,7 @@ public class SolicitacaoCompraService {
 
         solicitacaoCompraRepository.save(solicitacaoCompra);
 
-        for(ItemSolicitacaoCompraRequestDTO itemSolicitacaoDTO : dto.itensCompra()){
+        for(ItemSolicitacaoCompraCreateRequestDTO itemSolicitacaoDTO : dto.itensCompra()){
 
             ItemSolicitacaoCompra itemSolicitacaoCompra = new ItemSolicitacaoCompra();
             Produto produto = produtoRepository
@@ -106,7 +107,7 @@ public class SolicitacaoCompraService {
 
 
 
-    public ItemSolicitacaoCompraResponseDTO putItem(Long idItem, ItemSolicitacaoCompraRequestDTO dto){
+    public ItemSolicitacaoCompraResponseDTO putItem(Long idItem, ItemSolicitacaoCompraUpdateRequestDTO dto){
 
         ItemSolicitacaoCompra itemSolicitacaoCompra = itemSolicitacaoCompraRepository
                 .findById(idItem)

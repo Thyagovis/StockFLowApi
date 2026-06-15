@@ -1,7 +1,8 @@
 package com.stockflow.StockFlowApi.solicitacaoCompra.controller;
 
-import com.stockflow.StockFlowApi.solicitacaoCompra.dto.item.ItemSolicitacaoCompraRequestDTO;
+import com.stockflow.StockFlowApi.solicitacaoCompra.dto.item.ItemSolicitacaoCompraCreateRequestDTO;
 import com.stockflow.StockFlowApi.solicitacaoCompra.dto.item.ItemSolicitacaoCompraResponseDTO;
+import com.stockflow.StockFlowApi.solicitacaoCompra.dto.item.ItemSolicitacaoCompraUpdateRequestDTO;
 import com.stockflow.StockFlowApi.solicitacaoCompra.dto.solicitacao.SolicitacaoCompraDetalhadaResponseDTO;
 import com.stockflow.StockFlowApi.solicitacaoCompra.dto.solicitacao.SolicitacaoCompraRequestDTO;
 import com.stockflow.StockFlowApi.solicitacaoCompra.dto.solicitacao.SolicitacaoCompraSimplesResponseDTO;
@@ -45,7 +46,7 @@ public class SolicitacaoCompraController {
     @PostMapping("/item/{id}")
     public ResponseEntity<ItemSolicitacaoCompraResponseDTO> putItem(
             @PathVariable Long id,
-            @RequestBody ItemSolicitacaoCompraRequestDTO dto){
+            @RequestBody ItemSolicitacaoCompraUpdateRequestDTO dto){
 
         return new ResponseEntity<>(solicitacaoCompraService.putItem(id, dto), HttpStatus.OK);
 

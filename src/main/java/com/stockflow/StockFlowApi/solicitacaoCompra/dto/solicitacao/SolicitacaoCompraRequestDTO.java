@@ -1,7 +1,6 @@
 package com.stockflow.StockFlowApi.solicitacaoCompra.dto.solicitacao;
 
-import com.stockflow.StockFlowApi.solicitacaoCompra.dto.item.ItemSolicitacaoCompraRequestDTO;
-import com.stockflow.StockFlowApi.solicitacaoCompra.entity.ItemSolicitacaoCompra;
+import com.stockflow.StockFlowApi.solicitacaoCompra.dto.item.ItemSolicitacaoCompraCreateRequestDTO;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -16,6 +15,6 @@ public record SolicitacaoCompraRequestDTO(
         String obs,
 
         @NotEmpty
-        List<ItemSolicitacaoCompraRequestDTO> itensCompra
+        List<ItemSolicitacaoCompraCreateRequestDTO> itensCompra
 ) {
 }

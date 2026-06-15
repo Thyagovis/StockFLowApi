@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 
-public record ItemSolicitacaoCompraRequestDTO(
+public record ItemSolicitacaoCompraCreateRequestDTO(
         @NotNull
         Long produto_id,
 
