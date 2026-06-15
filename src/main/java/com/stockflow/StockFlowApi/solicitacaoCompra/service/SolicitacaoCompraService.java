@@ -10,6 +10,7 @@ import com.stockflow.StockFlowApi.solicitacaoCompra.dto.solicitacao.SolicitacaoC
 import com.stockflow.StockFlowApi.solicitacaoCompra.dto.solicitacao.SolicitacaoCompraSimplesResponseDTO;
 import com.stockflow.StockFlowApi.solicitacaoCompra.entity.ItemSolicitacaoCompra;
 import com.stockflow.StockFlowApi.solicitacaoCompra.entity.SolicitacaoCompra;
+import com.stockflow.StockFlowApi.solicitacaoCompra.mapper.SolicitacaoCompraMapper;
 import com.stockflow.StockFlowApi.solicitacaoCompra.repository.ItemSolicitacaoCompraRepository;
 import com.stockflow.StockFlowApi.solicitacaoCompra.repository.SolicitacaoCompraRepository;
 import com.stockflow.StockFlowApi.usuario.entity.Usuario;
@@ -25,6 +26,10 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.stockflow.StockFlowApi.solicitacaoCompra.mapper.ItemSolicitacaoCompraMapper.toItemDTO;
+import static com.stockflow.StockFlowApi.solicitacaoCompra.mapper.SolicitacaoCompraMapper.toDetalhadoDTO;
+import static com.stockflow.StockFlowApi.solicitacaoCompra.mapper.SolicitacaoCompraMapper.toSimplesDTO;
+
 @Data
 @Service
 @AllArgsConstructor
@@ -36,46 +41,6 @@ public class SolicitacaoCompraService {
     private final ItemSolicitacaoCompraRepository itemSolicitacaoCompraRepository;
     private final UsuarioRepository usuarioRepository;
     private final ProdutoRepository produtoRepository;
-
-
-
-    private SolicitacaoCompraSimplesResponseDTO definirSimplesDTO(SolicitacaoCompra solicitacaoCompra){
-        return new SolicitacaoCompraSimplesResponseDTO(
-                solicitacaoCompra.getId(),
-                solicitacaoCompra.getStatusSolicitacao(),
-                solicitacaoCompra.getObservacao(),
-                solicitacaoCompra.getData()
-        );
-    }
-
-
-
-    private SolicitacaoCompraDetalhadaResponseDTO definirDetalhadoDTO(SolicitacaoCompra solicitacaoCompra){
-
-        List<ItemSolicitacaoCompraResponseDTO> listaItens = itemSolicitacaoCompraRepository
-                .findBySolicitacaoCompraId(solicitacaoCompra.getId())
-                .stream()
-                .map(this::definirItemDTO)
-                .toList();
-
-        return new SolicitacaoCompraDetalhadaResponseDTO(
-                solicitacaoCompra.getId(),
-                solicitacaoCompra.getStatusSolicitacao(),
-                solicitacaoCompra.getObservacao(),
-                solicitacaoCompra.getData(),
-                listaItens
-        );
-    }
-
-
-
-    private ItemSolicitacaoCompraResponseDTO definirItemDTO(ItemSolicitacaoCompra itemSolicitacaoCompra){
-        return new ItemSolicitacaoCompraResponseDTO(
-                itemSolicitacaoCompra.getId(),
-                itemSolicitacaoCompra.getProduto().getName(),
-                itemSolicitacaoCompra.getQuantidadeSolicitada()
-        );
-    }
 
 
 
@@ -126,7 +91,7 @@ public class SolicitacaoCompraService {
             itemSolicitacaoCompraRepository.save(itemSolicitacaoCompra);
 
         }
-        return definirSimplesDTO(solicitacaoCompra);
+        return toSimplesDTO(solicitacaoCompra);
     }
 
 
@@ -180,7 +145,7 @@ public class SolicitacaoCompraService {
             itemSolicitacaoCompra.setQuantidadeSolicitada(dto.quantidadeSolicitada());
         }
 
-        return definirItemDTO(itemSolicitacaoCompraRepository.save(itemSolicitacaoCompra));
+        return toItemDTO(itemSolicitacaoCompraRepository.save(itemSolicitacaoCompra));
 
     }
 
@@ -191,7 +156,7 @@ public class SolicitacaoCompraService {
         return solicitacaoCompraRepository
                 .findAll()
                 .stream()
-                .map(this::definirSimplesDTO)
+                .map(SolicitacaoCompraMapper::toSimplesDTO)
                 .toList();
     }
 
@@ -201,7 +166,10 @@ public class SolicitacaoCompraService {
 
         SolicitacaoCompra solicitacaoCompra = findEntityById(id);
 
-        return definirDetalhadoDTO(solicitacaoCompra);
+        return toDetalhadoDTO(
+                solicitacaoCompra,
+                itemSolicitacaoCompraRepository.findBySolicitacaoCompraId(solicitacaoCompra.getId())
+        );
     }
 
 
@@ -219,7 +187,7 @@ public class SolicitacaoCompraService {
         solicitacaoCompra.setStatusSolicitacao(StatusSolicitacao.APROVADA);
         solicitacaoCompraRepository.save(solicitacaoCompra);
 
-        return definirSimplesDTO(solicitacaoCompra);
+        return toSimplesDTO(solicitacaoCompra);
     }
 
 
@@ -237,7 +205,7 @@ public class SolicitacaoCompraService {
         solicitacaoCompra.setStatusSolicitacao(StatusSolicitacao.REJEITADA);
         solicitacaoCompraRepository.save(solicitacaoCompra);
 
-        return definirSimplesDTO(solicitacaoCompra);
+        return toSimplesDTO(solicitacaoCompra);
     }
 
 
@@ -255,6 +223,6 @@ public class SolicitacaoCompraService {
         solicitacaoCompra.setStatusSolicitacao(StatusSolicitacao.COMPRADA);
         solicitacaoCompraRepository.save(solicitacaoCompra);
 
-        return definirSimplesDTO(solicitacaoCompra);
+        return toSimplesDTO(solicitacaoCompra);
     }
 }
