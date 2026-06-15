@@ -155,8 +155,6 @@ public class SolicitacaoCompraService {
                 .getSolicitacaoCompra()
                 .getId());
 
-
-
         if(solicitacaoCompra.getStatusSolicitacao() != StatusSolicitacao.ABERTA){
             throw new IllegalStateException(
                     "A solicitação só pode ser alterada enquanto estiver em ABERTO"
