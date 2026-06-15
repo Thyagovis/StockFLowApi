@@ -4,7 +4,7 @@ import com.stockflow.StockFlowApi.shared.enums.StatusSolicitacao;
 
 import java.time.LocalDateTime;
 
-public record SolicitacaoCompraResponseDTO(
+public record SolicitacaoCompraSimplesResponseDTO(
         Long id,
         StatusSolicitacao statusSolicitacao,
         String observacao,

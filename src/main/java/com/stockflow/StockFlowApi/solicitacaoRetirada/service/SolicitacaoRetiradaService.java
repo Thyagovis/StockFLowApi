@@ -92,10 +92,9 @@ public class SolicitacaoRetiradaService {
 
         Usuario usuario = usuarioRepository
                 .findById(dto.usuario_id())
-                .orElseThrow(
-                        () -> new ResponseStatusException(
-                                HttpStatus.NOT_FOUND,
-                                "Usuario não encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Usuario não encontrado"));
 
         solicitacaoRetirada.setStatusSolicitacao(StatusSolicitacao.ABERTA);
         solicitacaoRetirada.setUsuario(usuario);

@@ -2,12 +2,12 @@ package com.stockflow.StockFlowApi.solicitacaoCompra.service;
 
 import com.stockflow.StockFlowApi.produto.entity.Produto;
 import com.stockflow.StockFlowApi.produto.repository.ProdutoRepository;
-import com.stockflow.StockFlowApi.produto.service.ProdutoService;
 import com.stockflow.StockFlowApi.shared.enums.StatusSolicitacao;
 import com.stockflow.StockFlowApi.solicitacaoCompra.dto.item.ItemSolicitacaoCompraRequestDTO;
 import com.stockflow.StockFlowApi.solicitacaoCompra.dto.item.ItemSolicitacaoCompraResponseDTO;
+import com.stockflow.StockFlowApi.solicitacaoCompra.dto.solicitacao.SolicitacaoCompraDetalhadaResponseDTO;
 import com.stockflow.StockFlowApi.solicitacaoCompra.dto.solicitacao.SolicitacaoCompraRequestDTO;
-import com.stockflow.StockFlowApi.solicitacaoCompra.dto.solicitacao.SolicitacaoCompraResponseDTO;
+import com.stockflow.StockFlowApi.solicitacaoCompra.dto.solicitacao.SolicitacaoCompraSimplesResponseDTO;
 import com.stockflow.StockFlowApi.solicitacaoCompra.entity.ItemSolicitacaoCompra;
 import com.stockflow.StockFlowApi.solicitacaoCompra.entity.SolicitacaoCompra;
 import com.stockflow.StockFlowApi.solicitacaoCompra.repository.ItemSolicitacaoCompraRepository;
@@ -39,12 +39,31 @@ public class SolicitacaoCompraService {
 
 
 
-    private SolicitacaoCompraResponseDTO definirDTO(SolicitacaoCompra solicitacaoCompra){
-        return new SolicitacaoCompraResponseDTO(
+    private SolicitacaoCompraSimplesResponseDTO definirSimplesDTO(SolicitacaoCompra solicitacaoCompra){
+        return new SolicitacaoCompraSimplesResponseDTO(
                 solicitacaoCompra.getId(),
                 solicitacaoCompra.getStatusSolicitacao(),
                 solicitacaoCompra.getObservacao(),
                 solicitacaoCompra.getData()
+        );
+    }
+
+
+
+    private SolicitacaoCompraDetalhadaResponseDTO definirDetalhadoDTO(SolicitacaoCompra solicitacaoCompra){
+
+        List<ItemSolicitacaoCompraResponseDTO> listaItens = itemSolicitacaoCompraRepository
+                .findBySolicitacaoCompraId(solicitacaoCompra.getId())
+                .stream()
+                .map(this::definirItemDTO)
+                .toList();
+
+        return new SolicitacaoCompraDetalhadaResponseDTO(
+                solicitacaoCompra.getId(),
+                solicitacaoCompra.getStatusSolicitacao(),
+                solicitacaoCompra.getObservacao(),
+                solicitacaoCompra.getData(),
+                listaItens
         );
     }
 
@@ -71,7 +90,7 @@ public class SolicitacaoCompraService {
 
 
 
-    public SolicitacaoCompraResponseDTO save(SolicitacaoCompraRequestDTO dto){
+    public SolicitacaoCompraSimplesResponseDTO save(SolicitacaoCompraRequestDTO dto){
 
         Usuario usuario = usuarioRepository
                 .findById(dto.usuario_id())
@@ -107,7 +126,7 @@ public class SolicitacaoCompraService {
             itemSolicitacaoCompraRepository.save(itemSolicitacaoCompra);
 
         }
-        return definirDTO(solicitacaoCompra);
+        return definirSimplesDTO(solicitacaoCompra);
     }
 
 
@@ -131,12 +150,14 @@ public class SolicitacaoCompraService {
                         "Item não encontrado"
                 ));
 
-        SolicitacaoCompraResponseDTO compraResponseDTO = findById(
+        SolicitacaoCompra solicitacaoCompra = findEntityById(
                 itemSolicitacaoCompra
                 .getSolicitacaoCompra()
                 .getId());
 
-        if(compraResponseDTO.statusSolicitacao() != StatusSolicitacao.ABERTA){
+
+
+        if(solicitacaoCompra.getStatusSolicitacao() != StatusSolicitacao.ABERTA){
             throw new IllegalStateException(
                     "A solicitação só pode ser alterada enquanto estiver em ABERTO"
             );
@@ -167,32 +188,27 @@ public class SolicitacaoCompraService {
 
 
 
-    public List<SolicitacaoCompraResponseDTO> listAll(){
+    public List<SolicitacaoCompraSimplesResponseDTO> listAll(){
 
         return solicitacaoCompraRepository
                 .findAll()
                 .stream()
-                .map(this::definirDTO)
+                .map(this::definirSimplesDTO)
                 .toList();
     }
 
 
 
-    public SolicitacaoCompraResponseDTO findById(Long id){
+    public SolicitacaoCompraDetalhadaResponseDTO findById(Long id){
 
-        SolicitacaoCompra solicitacaoCompra = solicitacaoCompraRepository
-                .findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Solicitação não encontrada"
-                ));
+        SolicitacaoCompra solicitacaoCompra = findEntityById(id);
 
-        return definirDTO(solicitacaoCompra);
+        return definirDetalhadoDTO(solicitacaoCompra);
     }
 
 
 
-    public SolicitacaoCompraResponseDTO aprovar(Long id){
+    public SolicitacaoCompraSimplesResponseDTO aprovar(Long id){
 
         SolicitacaoCompra solicitacaoCompra = findEntityById(id);
 
@@ -205,12 +221,12 @@ public class SolicitacaoCompraService {
         solicitacaoCompra.setStatusSolicitacao(StatusSolicitacao.APROVADA);
         solicitacaoCompraRepository.save(solicitacaoCompra);
 
-        return definirDTO(solicitacaoCompra);
+        return definirSimplesDTO(solicitacaoCompra);
     }
 
 
 
-    public SolicitacaoCompraResponseDTO rejeitar(Long id){
+    public SolicitacaoCompraSimplesResponseDTO rejeitar(Long id){
 
         SolicitacaoCompra solicitacaoCompra = findEntityById(id);
 
@@ -223,12 +239,12 @@ public class SolicitacaoCompraService {
         solicitacaoCompra.setStatusSolicitacao(StatusSolicitacao.REJEITADA);
         solicitacaoCompraRepository.save(solicitacaoCompra);
 
-        return definirDTO(solicitacaoCompra);
+        return definirSimplesDTO(solicitacaoCompra);
     }
 
 
 
-    public SolicitacaoCompraResponseDTO comprar(Long id){
+    public SolicitacaoCompraSimplesResponseDTO comprar(Long id){
 
         SolicitacaoCompra solicitacaoCompra = findEntityById(id);
 
@@ -241,6 +257,6 @@ public class SolicitacaoCompraService {
         solicitacaoCompra.setStatusSolicitacao(StatusSolicitacao.COMPRADA);
         solicitacaoCompraRepository.save(solicitacaoCompra);
 
-        return definirDTO(solicitacaoCompra);
+        return definirSimplesDTO(solicitacaoCompra);
     }
 }
