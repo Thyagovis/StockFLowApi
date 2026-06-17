@@ -40,7 +40,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.POST, "/auth/registro").hasAllRoles("ADMINISTRADOR")
                         .requestMatchers("/usuarios").hasAllRoles("ADMINISTRADOR")
                         .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtSecurityFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exHandler -> exHandler
