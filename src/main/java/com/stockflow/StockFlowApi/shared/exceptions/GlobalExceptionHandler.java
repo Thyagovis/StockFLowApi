@@ -52,7 +52,7 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 400,
                 "Bad Request",
-                "Corpo JSON Invalido - "+(fieldError == null ? "" : fieldError.getField()+": "+fieldError.getRejectedValue()),
+                "Corpo JSON Invalido - "+(fieldError == null ? "" : "["+fieldError.getField()+"] "+fieldError.getDefaultMessage()),
                 request.getRequestURI()
         );
 
