@@ -19,16 +19,21 @@ public class MovimentacaoController {
     private final MovimentacaoService movimentacaoService;
 
     @PostMapping
-    public ResponseEntity<MovimentacaoLote> save(
-            @RequestBody MovimentacaoLoteRequestDTO dto){
+    public ResponseEntity<MovimentacaoLoteResponseDTO> save(
+            @RequestBody MovimentacaoLoteRequestDTO dto) {
+
+        MovimentacaoLote movimentacao = movimentacaoService.save(dto);
+
+        MovimentacaoLoteResponseDTO response =
+                movimentacaoService.findById(movimentacao.getId());
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(movimentacaoService.save(dto));
+                .body(response);
     }
 
     @GetMapping
-    public ResponseEntity<List<MovimentacaoLoteResponseDTO>> listAll(){
+    public ResponseEntity<List<MovimentacaoLoteResponseDTO>> listAll() {
 
         return ResponseEntity.ok(
                 movimentacaoService.listAll()
@@ -37,19 +42,10 @@ public class MovimentacaoController {
 
     @GetMapping("/{id}")
     public ResponseEntity<MovimentacaoLoteResponseDTO> findById(
-            @PathVariable Long id){
+            @PathVariable Long id) {
 
         return ResponseEntity.ok(
                 movimentacaoService.findById(id)
-        );
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(
-            @PathVariable Long id){
-
-        return ResponseEntity.ok(
-                movimentacaoService.delete(id)
         );
     }
 

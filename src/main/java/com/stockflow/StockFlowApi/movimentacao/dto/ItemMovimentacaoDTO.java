@@ -2,9 +2,8 @@ package com.stockflow.StockFlowApi.movimentacao.dto;
 
 import java.math.BigDecimal;
 
-public record ItemMovimentacaoRequestDTO(
+public record ItemMovimentacaoDTO(
 
-        Long movimentacaoLoteId,
         Long produtoId,
         BigDecimal quantidade,
         BigDecimal custoUnitario

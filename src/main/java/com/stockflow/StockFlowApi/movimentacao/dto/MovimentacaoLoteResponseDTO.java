@@ -4,6 +4,7 @@ import com.stockflow.StockFlowApi.movimentacao.enums.OrigemMovimentacao;
 import com.stockflow.StockFlowApi.movimentacao.enums.TipoMovimentacao;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public record MovimentacaoLoteResponseDTO(
 
@@ -12,7 +13,9 @@ public record MovimentacaoLoteResponseDTO(
         OrigemMovimentacao origemMovimentacao,
         LocalDateTime data,
         String observacao,
-        Long criadoPorId
+        Long criadoPorId,
+
+        List<ItemMovimentacaoDTO> itens
 
 ) {
 }
