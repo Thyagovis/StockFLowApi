@@ -29,7 +29,6 @@ public class SolicitacaoCompra {
     private Usuario usuario;
 
     @OneToMany(
-            mappedBy = "solicitacaoCompra",
             cascade = CascadeType.ALL,
             orphanRemoval = true)
     private List<ItemSolicitacaoCompra> itemSolicitacaoCompras;

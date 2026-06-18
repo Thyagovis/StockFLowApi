@@ -19,10 +19,10 @@ public class Categoria {
     private Long id;
 
     @Column(nullable = false)
-    private String name;
+    private String nome;
 
     @Column(nullable = false)
-    private String description;
+    private String descricao;
 
     @Column(nullable = false)
     private boolean isAtivo;

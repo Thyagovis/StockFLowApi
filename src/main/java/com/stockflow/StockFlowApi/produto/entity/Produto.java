@@ -24,13 +24,13 @@ public class Produto {
     private Categoria categoria;
 
     @Column(nullable = false)
-    private String name;
+    private String nome;
 
     @Column(nullable = false)
-    private String description;
+    private String descricao;
 
     @Column(nullable = false)
-    private boolean ativo;
+    private boolean isAtivo;
 
     @CreationTimestamp
     private LocalDateTime dataCadastro;
