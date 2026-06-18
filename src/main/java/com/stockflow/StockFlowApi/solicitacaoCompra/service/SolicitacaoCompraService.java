@@ -3,6 +3,11 @@ package com.stockflow.StockFlowApi.solicitacaoCompra.service;
 import com.stockflow.StockFlowApi.produto.entity.Produto;
 import com.stockflow.StockFlowApi.produto.repository.ProdutoRepository;
 import com.stockflow.StockFlowApi.shared.enums.StatusSolicitacao;
+import com.stockflow.StockFlowApi.movimentacao.service.MovimentacaoService;
+import com.stockflow.StockFlowApi.movimentacao.dto.ItemMovimentacaoDTO;
+import com.stockflow.StockFlowApi.movimentacao.dto.MovimentacaoLoteRequestDTO;
+import com.stockflow.StockFlowApi.movimentacao.enums.TipoMovimentacao;
+import com.stockflow.StockFlowApi.movimentacao.enums.OrigemMovimentacao;
 import com.stockflow.StockFlowApi.solicitacaoCompra.dto.item.ItemSolicitacaoCompraCreateRequestDTO;
 import com.stockflow.StockFlowApi.solicitacaoCompra.dto.item.ItemSolicitacaoCompraResponseDTO;
 import com.stockflow.StockFlowApi.solicitacaoCompra.dto.item.ItemSolicitacaoCompraUpdateRequestDTO;
@@ -14,6 +19,7 @@ import com.stockflow.StockFlowApi.solicitacaoCompra.entity.SolicitacaoCompra;
 import com.stockflow.StockFlowApi.solicitacaoCompra.mapper.SolicitacaoCompraMapper;
 import com.stockflow.StockFlowApi.solicitacaoCompra.repository.ItemSolicitacaoCompraRepository;
 import com.stockflow.StockFlowApi.solicitacaoCompra.repository.SolicitacaoCompraRepository;
+import com.stockflow.StockFlowApi.estoque.service.EstoqueService;
 import com.stockflow.StockFlowApi.usuario.entity.Usuario;
 import com.stockflow.StockFlowApi.usuario.repository.UsuarioRepository;
 import jakarta.transaction.Transactional;
@@ -26,6 +32,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.math.BigDecimal;
 
 import static com.stockflow.StockFlowApi.solicitacaoCompra.mapper.ItemSolicitacaoCompraMapper.toItemDTO;
 import static com.stockflow.StockFlowApi.solicitacaoCompra.mapper.SolicitacaoCompraMapper.toDetalhadoDTO;
@@ -42,7 +49,8 @@ public class SolicitacaoCompraService {
     private final ItemSolicitacaoCompraRepository itemSolicitacaoCompraRepository;
     private final UsuarioRepository usuarioRepository;
     private final ProdutoRepository produtoRepository;
-
+    private final EstoqueService estoqueService;
+    private final MovimentacaoService movimentacaoService;
 
 
     private SolicitacaoCompra findEntityById(Long id){
@@ -210,7 +218,6 @@ public class SolicitacaoCompraService {
     }
 
 
-
     public SolicitacaoCompraSimplesResponseDTO comprar(Long id){
 
         SolicitacaoCompra solicitacaoCompra = findEntityById(id);
@@ -221,9 +228,42 @@ public class SolicitacaoCompraService {
             );
         }
 
+        List<ItemSolicitacaoCompra> itens =
+           itemSolicitacaoCompraRepository.findBySolicitacaoCompraId(id);
+
+        for (ItemSolicitacaoCompra item : itens){
+            estoqueService.adicionarQuantidade(
+                item.getProduto().getId(),
+                item.getQuantidadeSolicitada().longValue()
+            );
+        }
+
+        registrarMovimentacaoEntrada(solicitacaoCompra, itens);
+
         solicitacaoCompra.setStatusSolicitacao(StatusSolicitacao.COMPRADA);
         solicitacaoCompraRepository.save(solicitacaoCompra);
 
         return toSimplesDTO(solicitacaoCompra);
     }
+
+    private void registrarMovimentacaoEntrada(SolicitacaoCompra solicitacaoCompra, List<ItemSolicitacaoCompra> itens) {
+
+    List<ItemMovimentacaoDTO> itensMovimentacao = itens.stream()
+            .map(item -> new ItemMovimentacaoDTO(
+                    item.getProduto().getId(),
+                    BigDecimal.valueOf(item.getQuantidadeSolicitada().longValue()),
+                    BigDecimal.ZERO
+            ))
+            .toList();
+
+    MovimentacaoLoteRequestDTO dto = new MovimentacaoLoteRequestDTO(
+            TipoMovimentacao.ENTRADA,
+            OrigemMovimentacao.COMPRA,
+            "Entrada referente à compra #" + solicitacaoCompra.getId(),
+            solicitacaoCompra.getUsuario().getId(),
+            itensMovimentacao
+    );
+
+    movimentacaoService.save(dto);
+}
 }

@@ -2,6 +2,12 @@ package com.stockflow.StockFlowApi.solicitacaoRetirada.service;
 
 import com.stockflow.StockFlowApi.produto.entity.Produto;
 import com.stockflow.StockFlowApi.produto.repository.ProdutoRepository;
+import com.stockflow.StockFlowApi.estoque.service.EstoqueService;
+import com.stockflow.StockFlowApi.movimentacao.service.MovimentacaoService;
+import com.stockflow.StockFlowApi.movimentacao.dto.ItemMovimentacaoDTO;
+import com.stockflow.StockFlowApi.movimentacao.dto.MovimentacaoLoteRequestDTO;
+import com.stockflow.StockFlowApi.movimentacao.enums.TipoMovimentacao;
+import com.stockflow.StockFlowApi.movimentacao.enums.OrigemMovimentacao;
 import com.stockflow.StockFlowApi.shared.enums.StatusSolicitacao;
 import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.item.SolicitacaoItemRetiradaCreateRequestDTO;
 import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.item.SolicitacaoItemRetiradaResponseDTO;
@@ -25,6 +31,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.math.BigDecimal;
 
 import static com.stockflow.StockFlowApi.solicitacaoRetirada.mapper.SolicitacaoRetiradaMapper.toDetalhadaRetiradaDTO;
 import static com.stockflow.StockFlowApi.solicitacaoRetirada.mapper.SolicitacaoRetiradaMapper.toSimplesRetiradaDTO;
@@ -39,6 +46,8 @@ public class SolicitacaoRetiradaService {
     private final SolicitacaoItemRetiradaRepository solicitacaoItemRetiradaRepository;
     private final UsuarioRepository usuarioRepository;
     private final ProdutoRepository produtoRepository;
+    private final EstoqueService estoqueService;
+    private final MovimentacaoService movimentacaoService;
 
 
 
@@ -186,12 +195,23 @@ public class SolicitacaoRetiradaService {
             );
         }
 
+        List<SolicitacaoItemRetirada> itens =
+            solicitacaoItemRetiradaRepository.findBySolicitacaoRetiradaId(id);
+
+        for (SolicitacaoItemRetirada item : itens) {
+            estoqueService.removerQuantidade(
+                item.getProduto().getId(),
+                item.getQuantidade().longValue()
+            );
+        }
+
+        registrarMovimentacaoSaida(solicitacaoRetirada, itens);
+
         solicitacaoRetirada.setStatusSolicitacao(StatusSolicitacao.APROVADA);
         solicitacaoRetiradaRepository.save(solicitacaoRetirada);
 
         return toSimplesRetiradaDTO(solicitacaoRetirada);
     }
-
 
 
     public SolicitacaoRetiradaSimplificadaResponseDTO rejeitar(Long id){
@@ -209,4 +229,27 @@ public class SolicitacaoRetiradaService {
 
         return toSimplesRetiradaDTO(solicitacaoRetirada);
     }
+
+    private void registrarMovimentacaoSaida(SolicitacaoRetirada solicitacaoRetirada, List<SolicitacaoItemRetirada> itens) {
+
+        List<ItemMovimentacaoDTO> itensMovimentacao = itens.stream()
+                .map(item -> new ItemMovimentacaoDTO(
+                    item.getProduto().getId(),
+                    BigDecimal.valueOf(item.getQuantidade().longValue()),
+                    BigDecimal.ZERO
+            ))
+                .toList();
+
+        MovimentacaoLoteRequestDTO dto = new MovimentacaoLoteRequestDTO(
+                TipoMovimentacao.SAIDA,
+                OrigemMovimentacao.RETIRADA,
+                "Saída referente à retirada #" + solicitacaoRetirada.getId()
+                        + " - " + solicitacaoRetirada.getJustificativa(),
+                solicitacaoRetirada.getUsuario().getId(),
+                itensMovimentacao
+        );
+
+        movimentacaoService.save(dto);
+    }
 }
+

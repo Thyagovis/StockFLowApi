@@ -91,6 +91,40 @@ public class EstoqueService {
     }
 
 
+    public void adicionarQuantidade(Long produtoId, Long quantidade) {
+
+        Estoque estoque = estoqueRepository.findByProdutoId(produtoId)
+            .orElseThrow(() -> new RuntimeException("Estoque não encontrado"));
+
+        estoque.setQuantidadeAtual(
+            estoque.getQuantidadeAtual() + quantidade
+    );
+
+    estoque.setUltimaAtualizacao(LocalDateTime.now());
+
+    estoqueRepository.save(estoque);
+    }
+
+
+    public void removerQuantidade(Long produtoId, Long quantidade) {
+
+        Estoque estoque = estoqueRepository.findByProdutoId(produtoId)
+            .orElseThrow(() -> new RuntimeException("Estoque não encontrado"));
+
+        if (estoque.getQuantidadeAtual() < quantidade) {
+            throw new RuntimeException("Estoque insuficiente");
+        }
+
+    estoque.setQuantidadeAtual(
+        estoque.getQuantidadeAtual() - quantidade
+    );
+
+    estoque.setUltimaAtualizacao(LocalDateTime.now());
+
+    estoqueRepository.save(estoque);
+   }
+
+   
     private void validar(EstoqueRequestDTO dto) {
 
         if (dto.quantidadeAtual() < 0) {
