@@ -1,12 +1,7 @@
 package com.stockflow.StockFlowApi.estoque.entity;
 
 import com.stockflow.StockFlowApi.produto.entity.Produto;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,10 +22,19 @@ public class Estoque {
     @JoinColumn(name = "produto_id")
     private Produto produto;
 
+    @Column(nullable = false)
     private Long quantidadeAtual;
+
+    @Column(nullable = false)
     private Long quantidadeReservada;
+
+    @Column(nullable = false)
     private Long estoqueMinimo;
+
+    @Column(nullable = false)
     private Long estoqueMaximo;
+
+    @Column(nullable = false)
     private LocalDateTime ultimaAtualizacao;
 
 }

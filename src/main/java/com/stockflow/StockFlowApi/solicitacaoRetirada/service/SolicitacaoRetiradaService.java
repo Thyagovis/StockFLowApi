@@ -3,16 +3,16 @@ package com.stockflow.StockFlowApi.solicitacaoRetirada.service;
 import com.stockflow.StockFlowApi.produto.entity.Produto;
 import com.stockflow.StockFlowApi.produto.repository.ProdutoRepository;
 import com.stockflow.StockFlowApi.shared.enums.StatusSolicitacao;
-import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.item.SolicitacaoItemRetiradaCreateRequestDTO;
-import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.item.SolicitacaoItemRetiradaResponseDTO;
-import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.item.SolicitacaoItemRetiradaUpdateDTO;
+import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.item.ItemSolicitacaoRetiradaCreateRequestDTO;
+import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.item.ItemSolicitacaoRetiradaResponseDTO;
+import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.item.ItemSolicitacaoRetiradaUpdateDTO;
 import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.solicitacao.SolicitacaoRetiradaRequestDTO;
 import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.solicitacao.SolicitacaoRetiradaDetalhadaResponseDTO;
 import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.solicitacao.SolicitacaoRetiradaSimplificadaResponseDTO;
-import com.stockflow.StockFlowApi.solicitacaoRetirada.entity.SolicitacaoItemRetirada;
+import com.stockflow.StockFlowApi.solicitacaoRetirada.entity.ItemSolicitacaoRetirada;
 import com.stockflow.StockFlowApi.solicitacaoRetirada.entity.SolicitacaoRetirada;
 import com.stockflow.StockFlowApi.solicitacaoRetirada.mapper.SolicitacaoRetiradaMapper;
-import com.stockflow.StockFlowApi.solicitacaoRetirada.repository.SolicitacaoItemRetiradaRepository;
+import com.stockflow.StockFlowApi.solicitacaoRetirada.repository.ItemSolicitacaoRetiradaRepository;
 import com.stockflow.StockFlowApi.solicitacaoRetirada.repository.SolicitacaoRetiradaRepository;
 import com.stockflow.StockFlowApi.usuario.entity.Usuario;
 import com.stockflow.StockFlowApi.usuario.repository.UsuarioRepository;
@@ -26,6 +26,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.stockflow.StockFlowApi.solicitacaoRetirada.mapper.ItemSolicitacaoRetiradaMapper.toItemDTO;
 import static com.stockflow.StockFlowApi.solicitacaoRetirada.mapper.SolicitacaoRetiradaMapper.toDetalhadaRetiradaDTO;
 import static com.stockflow.StockFlowApi.solicitacaoRetirada.mapper.SolicitacaoRetiradaMapper.toSimplesRetiradaDTO;
 
@@ -36,19 +37,9 @@ import static com.stockflow.StockFlowApi.solicitacaoRetirada.mapper.SolicitacaoR
 public class SolicitacaoRetiradaService {
 
     private final SolicitacaoRetiradaRepository solicitacaoRetiradaRepository;
-    private final SolicitacaoItemRetiradaRepository solicitacaoItemRetiradaRepository;
+    private final ItemSolicitacaoRetiradaRepository itemSolicitacaoRetiradaRepository;
     private final UsuarioRepository usuarioRepository;
     private final ProdutoRepository produtoRepository;
-
-
-
-    private SolicitacaoItemRetiradaResponseDTO definirItemDTO(SolicitacaoItemRetirada solicitacaoItemRetirada){
-        return new SolicitacaoItemRetiradaResponseDTO(
-                solicitacaoItemRetirada.getId(),
-                solicitacaoItemRetirada.getProduto().getName(),
-                solicitacaoItemRetirada.getQuantidade()
-        );
-    }
 
 
 
@@ -80,9 +71,9 @@ public class SolicitacaoRetiradaService {
 
         solicitacaoRetirada = solicitacaoRetiradaRepository.save(solicitacaoRetirada);
 
-        for(SolicitacaoItemRetiradaCreateRequestDTO itemDTO : dto.listaItens()){
+        for(ItemSolicitacaoRetiradaCreateRequestDTO itemDTO : dto.listaItens()){
 
-            SolicitacaoItemRetirada solicitacaoItemRetirada = new SolicitacaoItemRetirada();
+            ItemSolicitacaoRetirada itemSolicitacaoRetirada = new ItemSolicitacaoRetirada();
 
             Produto produto = produtoRepository
                     .findById(itemDTO.produto_id())
@@ -91,11 +82,11 @@ public class SolicitacaoRetiradaService {
                             "Produto não encontrado"
                     ));
 
-            solicitacaoItemRetirada.setSolicitacaoRetirada(solicitacaoRetirada);
-            solicitacaoItemRetirada.setProduto(produto);
-            solicitacaoItemRetirada.setQuantidade(itemDTO.quantidade());
+            itemSolicitacaoRetirada.setSolicitacaoRetirada(solicitacaoRetirada);
+            itemSolicitacaoRetirada.setProduto(produto);
+            itemSolicitacaoRetirada.setQuantidade(itemDTO.quantidade());
 
-            solicitacaoItemRetiradaRepository.save(solicitacaoItemRetirada);
+            itemSolicitacaoRetiradaRepository.save(itemSolicitacaoRetirada);
         }
 
         return toSimplesRetiradaDTO(solicitacaoRetirada);
@@ -113,9 +104,9 @@ public class SolicitacaoRetiradaService {
 
 
 
-    public SolicitacaoItemRetiradaResponseDTO updateItem(Long idItem, SolicitacaoItemRetiradaUpdateDTO dto){
+    public ItemSolicitacaoRetiradaResponseDTO updateItem(Long idItem, ItemSolicitacaoRetiradaUpdateDTO dto){
 
-        SolicitacaoItemRetirada solicitacaoItemRetirada = solicitacaoItemRetiradaRepository
+        ItemSolicitacaoRetirada itemSolicitacaoRetirada = itemSolicitacaoRetiradaRepository
                 .findById(idItem)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
@@ -123,7 +114,7 @@ public class SolicitacaoRetiradaService {
                 ));
 
         SolicitacaoRetiradaDetalhadaResponseDTO retiradaResponseDTO = findById(
-                solicitacaoItemRetirada
+                itemSolicitacaoRetirada
                 .getSolicitacaoRetirada()
                 .getId()
         );
@@ -142,16 +133,16 @@ public class SolicitacaoRetiradaService {
                             "Produto não encontrado"
                     ));
 
-            solicitacaoItemRetirada.setProduto(produto);
+            itemSolicitacaoRetirada.setProduto(produto);
         }
 
         if(dto.quantidade() != null){
-            solicitacaoItemRetirada.setQuantidade(dto.quantidade());
+            itemSolicitacaoRetirada.setQuantidade(dto.quantidade());
         }
 
-        solicitacaoItemRetiradaRepository.save(solicitacaoItemRetirada);
+        itemSolicitacaoRetiradaRepository.save(itemSolicitacaoRetirada);
 
-        return definirItemDTO(solicitacaoItemRetirada);
+        return toItemDTO(itemSolicitacaoRetirada);
     }
 
 
@@ -160,7 +151,7 @@ public class SolicitacaoRetiradaService {
 
         return toDetalhadaRetiradaDTO(
                 findEntityByid(id),
-                solicitacaoItemRetiradaRepository.findBySolicitacaoRetiradaId(id)
+                itemSolicitacaoRetiradaRepository.findBySolicitacaoRetiradaId(id)
                 );
     }
 

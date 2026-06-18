@@ -8,7 +8,7 @@ public class ItemSolicitacaoCompraMapper {
     public static ItemSolicitacaoCompraResponseDTO toItemDTO(ItemSolicitacaoCompra itemSolicitacaoCompra){
         return new ItemSolicitacaoCompraResponseDTO(
                 itemSolicitacaoCompra.getId(),
-                itemSolicitacaoCompra.getProduto().getName(),
+                itemSolicitacaoCompra.getProduto().getNome(),
                 itemSolicitacaoCompra.getQuantidadeSolicitada()
         );
     }

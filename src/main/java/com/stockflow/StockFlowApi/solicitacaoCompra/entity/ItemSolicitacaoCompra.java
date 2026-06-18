@@ -22,10 +22,13 @@ public class ItemSolicitacaoCompra {
     private SolicitacaoCompra solicitacaoCompra;
 
     @OneToOne
-    @JoinColumn(name = "produto_id")
+    @JoinColumn(name = "produto_id", nullable = false)
     private Produto produto;
 
+    @Column(nullable = false)
     private BigDecimal quantidadeSolicitada;
+
+    @Column(nullable = false)
     private String observacao;
 
 }

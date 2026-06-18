@@ -40,8 +40,8 @@ public class ProdutoService {
                 .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
 
         Produto produto = new Produto();
-        produto.setName(dto.name());
-        produto.setDescription(dto.description());
+        produto.setNome(dto.nome());
+        produto.setDescricao(dto.descricao());
         produto.setAtivo(dto.ativo());
         produto.setCategoria(categoria);
         produto.setDataCadastro(LocalDateTime.now());
@@ -59,8 +59,8 @@ public class ProdutoService {
         Categoria categoria = categoriaRepository.findById(dto.categoriaId())
                 .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
 
-        produto.setName(dto.name());
-        produto.setDescription(dto.description());
+        produto.setNome(dto.nome());
+        produto.setDescricao(dto.descricao());
         produto.setAtivo(dto.ativo());
         produto.setCategoria(categoria);
 
@@ -81,7 +81,7 @@ public class ProdutoService {
 
 
     private void validar(ProdutoRequestDTO dto) {
-        if (dto.name() == null || dto.name().isBlank()) {
+        if (dto.nome() == null || dto.nome().isBlank()) {
             throw new RuntimeException("Nome do produto é obrigatório");
         }
     }
@@ -91,8 +91,8 @@ public class ProdutoService {
         return new ProdutoResponseDTO(
                 produto.getId(),
                 produto.getCategoria() != null ? produto.getCategoria().getId() : null,
-                produto.getName(),
-                produto.getDescription(),
+                produto.getNome(),
+                produto.getDescricao(),
                 produto.isAtivo(),
                 produto.getDataCadastro()
         );

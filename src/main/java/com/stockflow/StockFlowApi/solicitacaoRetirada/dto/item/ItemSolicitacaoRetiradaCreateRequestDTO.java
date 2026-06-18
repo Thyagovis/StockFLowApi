@@ -4,8 +4,11 @@ import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
 
-public record SolicitacaoItemRetiradaUpdateDTO(
+public record ItemSolicitacaoRetiradaCreateRequestDTO(
+        @NotNull
         Long produto_id,
+
+        @NotNull
         BigDecimal quantidade
 ) {
 }

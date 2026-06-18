@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,20 +22,23 @@ public class SolicitacaoRetirada {
     private Long id;
 
     @Enumerated
+    @Column(nullable = false)
     private StatusSolicitacao statusSolicitacao;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id")
+    @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
     @OneToMany(
-            mappedBy = "SolicitacaoRetirada",
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private List<SolicitacaoItemRetirada> itemSolicitacaoRetirada;
+    private List<ItemSolicitacaoRetirada> itemSolicitacaoRetirada;
 
+    @CreationTimestamp
     private LocalDateTime data;
+
+    @Column(nullable = false)
     private String justificativa;
 
 

@@ -1,8 +1,7 @@
 package com.stockflow.StockFlowApi.solicitacaoRetirada.controller;
 
-import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.item.SolicitacaoItemRetiradaCreateRequestDTO;
-import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.item.SolicitacaoItemRetiradaResponseDTO;
-import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.item.SolicitacaoItemRetiradaUpdateDTO;
+import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.item.ItemSolicitacaoRetiradaResponseDTO;
+import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.item.ItemSolicitacaoRetiradaUpdateDTO;
 import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.solicitacao.SolicitacaoRetiradaDetalhadaResponseDTO;
 import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.solicitacao.SolicitacaoRetiradaRequestDTO;
 import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.solicitacao.SolicitacaoRetiradaSimplificadaResponseDTO;
@@ -42,9 +41,9 @@ public class SolicitacaoRetiradaController {
     }
 
     @PutMapping("/item/{id}")
-    public ResponseEntity<SolicitacaoItemRetiradaResponseDTO> putItem(
+    public ResponseEntity<ItemSolicitacaoRetiradaResponseDTO> putItem(
             @PathVariable Long id,
-            @RequestBody SolicitacaoItemRetiradaUpdateDTO dto){
+            @RequestBody ItemSolicitacaoRetiradaUpdateDTO dto){
         return new ResponseEntity<>(solicitacaoRetiradaService.updateItem(id, dto), HttpStatus.OK);
     }
 

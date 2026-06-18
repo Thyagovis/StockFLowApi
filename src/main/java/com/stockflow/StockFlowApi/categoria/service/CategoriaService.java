@@ -34,8 +34,8 @@ public class CategoriaService {
         validar(dto);
 
         Categoria categoria = new Categoria();
-        categoria.setName(dto.name());
-        categoria.setDescription(dto.description());
+        categoria.setNome(dto.nome());
+        categoria.setDescricao(dto.descricao());
         categoria.setAtivo(dto.isAtivo());
         categoria.setDataCadastro(LocalDateTime.now());
 
@@ -49,8 +49,8 @@ public class CategoriaService {
 
         Categoria categoria = buscarEntityPorId(id);
 
-        categoria.setName(dto.name());
-        categoria.setDescription(dto.description());
+        categoria.setNome(dto.nome());
+        categoria.setDescricao(dto.descricao());
         categoria.setAtivo(dto.isAtivo());
 
         return toResponseDTO(categoriaRepository.save(categoria));
@@ -70,7 +70,7 @@ public class CategoriaService {
 
 
     private void validar(CategoriaRequestDTO dto) {
-        if (dto.name() == null || dto.name().isBlank()) {
+        if (dto.nome() == null || dto.nome().isBlank()) {
             throw new RuntimeException("Nome da categoria é obrigatório");
         }
     }
@@ -79,8 +79,8 @@ public class CategoriaService {
     private CategoriaResponseDTO toResponseDTO(Categoria categoria) {
         return new CategoriaResponseDTO(
                 categoria.getId(),
-                categoria.getName(),
-                categoria.getDescription(),
+                categoria.getNome(),
+                categoria.getDescricao(),
                 categoria.isAtivo(),
                 categoria.getDataCadastro()
         );

@@ -5,8 +5,8 @@ import java.time.LocalDateTime;
 public record ProdutoResponseDTO(
         Long id,
         Long categoriaId,
-        String name,
-        String description,
+        String nome,
+        String descricao,
         boolean ativo,
         LocalDateTime dataCadastro
 ) {}

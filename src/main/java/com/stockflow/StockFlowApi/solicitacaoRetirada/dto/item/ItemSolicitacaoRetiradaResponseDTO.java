@@ -1,12 +1,10 @@
 package com.stockflow.StockFlowApi.solicitacaoRetirada.dto.item;
 
-import com.stockflow.StockFlowApi.produto.dto.ProdutoResponseDTO;
-
 import java.math.BigDecimal;
 
-public record SolicitacaoItemRetiradaResponseDTO(
+public record ItemSolicitacaoRetiradaResponseDTO(
         Long id,
-        String produtoName,
+        String produtoNome,
         BigDecimal quantidade
 ) {
 }

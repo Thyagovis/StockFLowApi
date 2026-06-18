@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 
 public record CategoriaResponseDTO(
         Long id,
-        String name,
-        String description,
+        String nome,
+        String descricao,
         boolean isAtivo,
         LocalDateTime dataCadastro
 ) {}

@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -21,18 +22,22 @@ public class Chamado {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id")
+    @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
     @Enumerated
+    @Column(nullable = false)
     private TipoChamado tipoChamado;
 
     @Enumerated
+    @Column(nullable = false)
     private StatusChamado statusChamado;
 
+    @Column(nullable = false)
     private String descricao;
+
+    @CreationTimestamp
     private LocalDateTime dataAbertura;
+
     private LocalDateTime dataFechamento;
-
-
 }

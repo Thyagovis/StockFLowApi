@@ -26,8 +26,13 @@ public class ItemMovimentacao {
     @JoinColumn(name = "produto_id")
     private Produto produto;
 
+    @Column(nullable = false)
     private BigDecimal quantidade;
+
+    @Column(nullable = false)
     private BigDecimal custoUnitario;
+
+    @Column(nullable = false)
     private BigDecimal custoTotal;
 
 }

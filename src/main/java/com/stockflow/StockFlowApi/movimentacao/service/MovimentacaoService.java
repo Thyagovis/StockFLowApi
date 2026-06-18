@@ -9,6 +9,8 @@ import com.stockflow.StockFlowApi.movimentacao.repository.ItemMovimentacaoReposi
 import com.stockflow.StockFlowApi.movimentacao.repository.MovimentacaoLoteRepository;
 import com.stockflow.StockFlowApi.produto.entity.Produto;
 import com.stockflow.StockFlowApi.produto.repository.ProdutoRepository;
+import com.stockflow.StockFlowApi.usuario.entity.Usuario;
+import com.stockflow.StockFlowApi.usuario.repository.UsuarioRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -31,6 +33,8 @@ public class MovimentacaoService {
 
     private final ProdutoRepository produtoRepository;
 
+    private final UsuarioRepository usuarioRepository;
+
     private MovimentacaoLoteResponseDTO definirDTO(
             MovimentacaoLote movimentacao) {
 
@@ -51,7 +55,7 @@ public class MovimentacaoService {
                 movimentacao.getOrigemMovimentacao(),
                 movimentacao.getData(),
                 movimentacao.getObservacao(),
-                movimentacao.getCriadoPorId(),
+                movimentacao.getUsuario().getId(),
                 itens
         );
     }
@@ -69,11 +73,17 @@ public class MovimentacaoService {
     public MovimentacaoLote save(MovimentacaoLoteRequestDTO dto) {
 
         MovimentacaoLote movimentacao = new MovimentacaoLote();
+        Usuario usuario = usuarioRepository
+                .findById(dto.criadoPorId())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Usuario não encontrado"
+                ));
 
         movimentacao.setTipoMovimentacao(dto.tipoMovimentacao());
         movimentacao.setOrigemMovimentacao(dto.origemMovimentacao());
         movimentacao.setObservacao(dto.observacao());
-        movimentacao.setCriadoPorId(dto.criadoPorId());
+        movimentacao.setUsuario(usuario);
         movimentacao.setData(LocalDateTime.now());
 
         movimentacao = movimentacaoLoteRepository.save(movimentacao);

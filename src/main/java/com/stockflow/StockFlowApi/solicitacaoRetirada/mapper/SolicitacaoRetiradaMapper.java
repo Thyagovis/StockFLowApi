@@ -2,7 +2,7 @@ package com.stockflow.StockFlowApi.solicitacaoRetirada.mapper;
 
 import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.solicitacao.SolicitacaoRetiradaDetalhadaResponseDTO;
 import com.stockflow.StockFlowApi.solicitacaoRetirada.dto.solicitacao.SolicitacaoRetiradaSimplificadaResponseDTO;
-import com.stockflow.StockFlowApi.solicitacaoRetirada.entity.SolicitacaoItemRetirada;
+import com.stockflow.StockFlowApi.solicitacaoRetirada.entity.ItemSolicitacaoRetirada;
 import com.stockflow.StockFlowApi.solicitacaoRetirada.entity.SolicitacaoRetirada;
 
 import java.util.List;
@@ -11,7 +11,7 @@ public class SolicitacaoRetiradaMapper {
 
     public static SolicitacaoRetiradaDetalhadaResponseDTO toDetalhadaRetiradaDTO(
             SolicitacaoRetirada solicitacaoRetirada,
-            List<SolicitacaoItemRetirada> itensRetirada
+            List<ItemSolicitacaoRetirada> itensRetirada
     ){
 
         return new SolicitacaoRetiradaDetalhadaResponseDTO(

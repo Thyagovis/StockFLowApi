@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -19,12 +20,19 @@ public class Produto {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "categoria_id")
+    @JoinColumn(name = "categoria_id", nullable = false)
     private Categoria categoria;
 
-    private String name;
-    private String description;
-    private boolean ativo;
+    @Column(nullable = false, unique = true)
+    private String nome;
+
+    @Column(nullable = false)
+    private String descricao;
+
+    @Column(nullable = false)
+    private boolean isAtivo;
+
+    @CreationTimestamp
     private LocalDateTime dataCadastro;
 
 }

@@ -2,7 +2,7 @@ package com.stockflow.StockFlowApi.produto.dto;
 
 public record ProdutoRequestDTO(
         Long categoriaId,
-        String name,
-        String description,
+        String nome,
+        String descricao,
         boolean ativo
 ) {}
