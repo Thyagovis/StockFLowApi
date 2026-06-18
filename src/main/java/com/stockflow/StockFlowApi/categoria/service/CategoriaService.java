@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.stockflow.StockFlowApi.shared.utils.StringUtils.stringSaveFormat;
+
 @Service
 @RequiredArgsConstructor
 public class CategoriaService {
@@ -34,9 +36,9 @@ public class CategoriaService {
         validar(dto);
 
         Categoria categoria = new Categoria();
-        categoria.setNome(dto.nome());
+        categoria.setNome(stringSaveFormat(dto.nome()));
         categoria.setDescricao(dto.descricao());
-        categoria.setAtivo(dto.isAtivo());
+        categoria.setAtivo(true);
         categoria.setDataCadastro(LocalDateTime.now());
 
         return toResponseDTO(categoriaRepository.save(categoria));
@@ -49,9 +51,8 @@ public class CategoriaService {
 
         Categoria categoria = buscarEntityPorId(id);
 
-        categoria.setNome(dto.nome());
+        categoria.setNome(stringSaveFormat(dto.nome()));
         categoria.setDescricao(dto.descricao());
-        categoria.setAtivo(dto.isAtivo());
 
         return toResponseDTO(categoriaRepository.save(categoria));
     }

@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.stockflow.StockFlowApi.shared.utils.StringUtils.stringSaveFormat;
+
 @Service
 @RequiredArgsConstructor
 public class ProdutoService {
@@ -40,9 +42,9 @@ public class ProdutoService {
                 .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
 
         Produto produto = new Produto();
-        produto.setNome(dto.nome());
+        produto.setNome(stringSaveFormat(dto.nome()));
         produto.setDescricao(dto.descricao());
-        produto.setAtivo(dto.ativo());
+        produto.setAtivo(true);
         produto.setCategoria(categoria);
         produto.setDataCadastro(LocalDateTime.now());
 
@@ -59,9 +61,8 @@ public class ProdutoService {
         Categoria categoria = categoriaRepository.findById(dto.categoriaId())
                 .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
 
-        produto.setNome(dto.nome());
+        produto.setNome(stringSaveFormat(dto.nome()));
         produto.setDescricao(dto.descricao());
-        produto.setAtivo(dto.ativo());
         produto.setCategoria(categoria);
 
         return toResponseDTO(produtoRepository.save(produto));
