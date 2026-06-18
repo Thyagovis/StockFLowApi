@@ -1,6 +1,5 @@
 package com.stockflow.StockFlowApi.movimentacao.service;
 
-import com.stockflow.StockFlowApi.estoque.repository.EstoqueRepository;
 import com.stockflow.StockFlowApi.movimentacao.dto.ItemMovimentacaoDTO;
 import com.stockflow.StockFlowApi.movimentacao.dto.MovimentacaoLoteRequestDTO;
 import com.stockflow.StockFlowApi.movimentacao.dto.MovimentacaoLoteResponseDTO;
@@ -31,8 +30,6 @@ public class MovimentacaoService {
     private final ItemMovimentacaoRepository itemMovimentacaoRepository;
 
     private final ProdutoRepository produtoRepository;
-
-    private final EstoqueRepository estoqueRepository;
 
     private MovimentacaoLoteResponseDTO definirDTO(
             MovimentacaoLote movimentacao) {

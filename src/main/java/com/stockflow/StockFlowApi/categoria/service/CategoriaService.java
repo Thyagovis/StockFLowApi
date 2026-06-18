@@ -3,6 +3,7 @@ package com.stockflow.StockFlowApi.categoria.service;
 import com.stockflow.StockFlowApi.categoria.dto.CategoriaRequestDTO;
 import com.stockflow.StockFlowApi.categoria.dto.CategoriaResponseDTO;
 import com.stockflow.StockFlowApi.categoria.entity.Categoria;
+import com.stockflow.StockFlowApi.categoria.mapper.CategoriaMapper;
 import com.stockflow.StockFlowApi.categoria.repository.CategoriaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,41 +20,27 @@ public class CategoriaService {
     public List<CategoriaResponseDTO> listarTodas() {
         return categoriaRepository.findAll()
                 .stream()
-                .map(this::toResponseDTO)
+                .map(CategoriaMapper::toDTO)
                 .toList();
     }
 
 
     public CategoriaResponseDTO buscarPorId(Long id) {
-        return toResponseDTO(buscarEntityPorId(id));
+       return CategoriaMapper.toDTO(buscarEntityPorId(id));
     }
 
 
     public CategoriaResponseDTO criar(CategoriaRequestDTO dto) {
-
-        validar(dto);
-
-        Categoria categoria = new Categoria();
-        categoria.setName(dto.name());
-        categoria.setDescription(dto.description());
-        categoria.setAtivo(dto.isAtivo());
+        Categoria categoria = CategoriaMapper.toEntity(dto);
         categoria.setDataCadastro(LocalDateTime.now());
-
-        return toResponseDTO(categoriaRepository.save(categoria));
+        return CategoriaMapper.toDTO(categoriaRepository.save(categoria));
     }
 
 
     public CategoriaResponseDTO atualizar(Long id, CategoriaRequestDTO dto) {
-
-        validar(dto);
-
         Categoria categoria = buscarEntityPorId(id);
-
-        categoria.setName(dto.name());
-        categoria.setDescription(dto.description());
-        categoria.setAtivo(dto.isAtivo());
-
-        return toResponseDTO(categoriaRepository.save(categoria));
+        CategoriaMapper.updateEntity(categoria, dto);
+        return CategoriaMapper.toDTO(categoriaRepository.save(categoria));
     }
 
 
@@ -68,22 +55,4 @@ public class CategoriaService {
                 .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
     }
 
-
-    private void validar(CategoriaRequestDTO dto) {
-        if (dto.name() == null || dto.name().isBlank()) {
-            throw new RuntimeException("Nome da categoria é obrigatório");
-        }
-    }
-
-
-    private CategoriaResponseDTO toResponseDTO(Categoria categoria) {
-        return new CategoriaResponseDTO(
-                categoria.getId(),
-                categoria.getName(),
-                categoria.getDescription(),
-                categoria.isAtivo(),
-                categoria.getDataCadastro()
-        );
-    }
-    
 }

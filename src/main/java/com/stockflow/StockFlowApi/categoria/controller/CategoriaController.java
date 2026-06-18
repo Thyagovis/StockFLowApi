@@ -3,6 +3,8 @@ package com.stockflow.StockFlowApi.categoria.controller;
 import com.stockflow.StockFlowApi.categoria.dto.CategoriaRequestDTO;
 import com.stockflow.StockFlowApi.categoria.dto.CategoriaResponseDTO;
 import com.stockflow.StockFlowApi.categoria.service.CategoriaService;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +31,7 @@ public class CategoriaController {
 
 
     @PostMapping
-    public CategoriaResponseDTO criar(@RequestBody CategoriaRequestDTO dto) {
+    public CategoriaResponseDTO criar(@RequestBody @Valid CategoriaRequestDTO dto) {
         return categoriaService.criar(dto);
     }
 
@@ -37,7 +39,7 @@ public class CategoriaController {
     @PutMapping("/{id}")
     public CategoriaResponseDTO atualizar(
             @PathVariable Long id,
-            @RequestBody CategoriaRequestDTO dto) {
+            @RequestBody @Valid CategoriaRequestDTO dto) {
 
         return categoriaService.atualizar(id, dto);
     }

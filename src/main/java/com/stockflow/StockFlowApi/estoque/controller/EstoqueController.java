@@ -3,6 +3,8 @@ package com.stockflow.StockFlowApi.estoque.controller;
 import com.stockflow.StockFlowApi.estoque.dto.EstoqueRequestDTO;
 import com.stockflow.StockFlowApi.estoque.dto.EstoqueResponseDTO;
 import com.stockflow.StockFlowApi.estoque.service.EstoqueService;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +30,7 @@ public class EstoqueController {
 
 
     @PostMapping
-    public EstoqueResponseDTO criar(@RequestBody EstoqueRequestDTO dto) {
+    public EstoqueResponseDTO criar(@RequestBody @Valid EstoqueRequestDTO dto) {
         return estoqueService.criar(dto);
     }
 
@@ -36,6 +38,7 @@ public class EstoqueController {
     @PutMapping("/{id}")
     public EstoqueResponseDTO atualizar(
             @PathVariable Long id,
+            @Valid
             @RequestBody EstoqueRequestDTO dto) {
 
         return estoqueService.atualizar(id, dto);
