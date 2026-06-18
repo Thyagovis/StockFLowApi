@@ -1,7 +1,7 @@
 package com.stockflow.StockFlowApi.usuario.service;
 
 import com.stockflow.StockFlowApi.shared.exceptions.ConflictException;
-import com.stockflow.StockFlowApi.shared.exceptions.UserNotFoundException;
+import com.stockflow.StockFlowApi.shared.exceptions.NotFoundException;
 import com.stockflow.StockFlowApi.usuario.dto.UsuarioMapper;
 import com.stockflow.StockFlowApi.usuario.dto.UsuarioPatchDTO;
 import com.stockflow.StockFlowApi.usuario.dto.UsuarioRegisterDTO;
@@ -35,7 +35,7 @@ public class UsuarioService {
     public UsuarioResponseDTO findById(Long id) {
         return UsuarioMapper.paraResponseDTO(
                 usuarioRepository.findById(id)
-                        .orElseThrow(() -> new UserNotFoundException("Usuario não encontrado"))
+                        .orElseThrow(() -> new NotFoundException("Usuario não encontrado"))
         );
     }
 
@@ -61,7 +61,7 @@ public class UsuarioService {
     @Transactional
     public void deleteById(Long id) {
         if (!usuarioRepository.existsById(id)) {
-            throw new UserNotFoundException("Registro não encontrado");
+            throw new NotFoundException("Registro não encontrado");
         }
 
         usuarioRepository.deleteById(id);
@@ -71,7 +71,7 @@ public class UsuarioService {
     public UsuarioResponseDTO patchUsuario(Long id, UsuarioPatchDTO patchDTO) {
 
         var usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("Usuario não foi encontrado"));
+                .orElseThrow(() -> new NotFoundException("Usuario não foi encontrado"));
 
         if (patchDTO.nome() != null) {
             usuario.setNome(patchDTO.nome().trim().toLowerCase());

@@ -6,10 +6,11 @@ import com.stockflow.StockFlowApi.produto.dto.ProdutoRequestDTO;
 import com.stockflow.StockFlowApi.produto.dto.ProdutoResponseDTO;
 import com.stockflow.StockFlowApi.produto.entity.Produto;
 import com.stockflow.StockFlowApi.produto.repository.ProdutoRepository;
+import com.stockflow.StockFlowApi.shared.exceptions.NotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -28,35 +29,40 @@ public class ProdutoService {
 
 
     public ProdutoResponseDTO buscarPorId(Long id) {
-        return toResponseDTO(buscarEntityPorId(id));
+        var produto = produtoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Produto não encontrado"));
+
+        return toResponseDTO(produto);
     }
 
 
+    @Transactional
     public ProdutoResponseDTO criar(ProdutoRequestDTO dto) {
 
         validar(dto);
 
         Categoria categoria = categoriaRepository.findById(dto.categoriaId())
-                .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
+                .orElseThrow(() -> new NotFoundException("Categoria não encontrada"));
 
-        Produto produto = new Produto();
-        produto.setNome(dto.nome());
-        produto.setDescricao(dto.descricao());
-        produto.setAtivo(dto.ativo());
-        produto.setCategoria(categoria);
-        produto.setDataCadastro(LocalDateTime.now());
+        var produto = new Produto(
+                dto.nome(),
+                dto.descricao(),
+                categoria
+        );
 
         return toResponseDTO(produtoRepository.save(produto));
     }
 
 
+    @Transactional
     public ProdutoResponseDTO atualizar(Long id, ProdutoRequestDTO dto) {
 
         validar(dto);
 
-        Produto produto = buscarEntityPorId(id);
+        var produto = produtoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Produto não encontrado"));
 
-        Categoria categoria = categoriaRepository.findById(dto.categoriaId())
+        var categoria = categoriaRepository.findById(dto.categoriaId())
                 .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
 
         produto.setNome(dto.nome());
@@ -68,15 +74,13 @@ public class ProdutoService {
     }
 
 
+    @Transactional
     public void deletar(Long id) {
-        Produto produto = buscarEntityPorId(id);
-        produtoRepository.delete(produto);
-    }
+        if (!produtoRepository.existsById(id)) {
+            throw new NotFoundException("Produto não encontrado");
+        }
 
-
-    private Produto buscarEntityPorId(Long id) {
-        return produtoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+        produtoRepository.deleteById(id);
     }
 
 
