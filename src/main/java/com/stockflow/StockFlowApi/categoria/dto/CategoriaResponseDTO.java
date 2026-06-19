@@ -6,6 +6,8 @@ public record CategoriaResponseDTO(
         Long id,
         String nome,
         String descricao,
-        boolean isAtivo,
-        LocalDateTime dataCadastro
-) {}
+        LocalDateTime dataCadastro,
+        boolean ativo
+) {
+
+}
