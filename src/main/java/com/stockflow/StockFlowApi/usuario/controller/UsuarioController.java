@@ -1,5 +1,6 @@
 package com.stockflow.StockFlowApi.usuario.controller;
 
+import com.stockflow.StockFlowApi.usuario.doc.UsuarioControllerDoc;
 import com.stockflow.StockFlowApi.usuario.dto.UsuarioPatchDTO;
 import com.stockflow.StockFlowApi.usuario.dto.UsuarioResponseDTO;
 import com.stockflow.StockFlowApi.usuario.service.UsuarioService;
@@ -14,7 +15,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/usuarios")
-public class UsuarioController {
+public class UsuarioController implements UsuarioControllerDoc {
 
     private final UsuarioService usuarioService;
 
@@ -33,7 +34,7 @@ public class UsuarioController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         usuarioService.deleteById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

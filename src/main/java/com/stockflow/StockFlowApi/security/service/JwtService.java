@@ -6,8 +6,9 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.stockflow.StockFlowApi.security.dto.TokenResponseDTO;
 import com.stockflow.StockFlowApi.shared.exceptions.InvalidTokenException;
+import com.stockflow.StockFlowApi.usuario.dto.UsuarioMapper;
+import com.stockflow.StockFlowApi.usuario.entity.Usuario;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -24,7 +25,7 @@ public class JwtService {
     @Value("${security.jwt.issuer}")
     private String ISSUER;
 
-    public TokenResponseDTO gerarToken(UserDetails usuario) {
+    public TokenResponseDTO gerarToken(Usuario usuario) {
         var token = JWT.create()
                 .withIssuer(ISSUER)
                 .withSubject(usuario.getUsername())
@@ -32,7 +33,11 @@ public class JwtService {
                 .withExpiresAt(Instant.now().plusSeconds(EXPIRATION))
                 .sign(Algorithm.HMAC256(SECRET));
 
-        return new TokenResponseDTO(token, EXPIRATION);
+        return new TokenResponseDTO(
+                token,
+                EXPIRATION,
+                UsuarioMapper.paraUsuarioSummaryDTO(usuario)
+        );
     }
 
     public String validarToken(String token) {
