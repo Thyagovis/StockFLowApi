@@ -53,6 +53,8 @@ public class ProdutoService {
                 dto.codigo().trim(),
                 dto.nome().trim().toLowerCase(),
                 dto.descricao().trim().toLowerCase(),
+                dto.estoqueMinimo(),
+                dto.estoqueMaximo(),
                 categoria
         );
 
@@ -80,6 +82,14 @@ public class ProdutoService {
 
         if (dto.descricao() != null) {
             produto.setDescricao(dto.descricao().trim().toLowerCase());
+        }
+
+        if (dto.estoqueMinimo() != null) {
+            produto.setEstoqueMinimo(dto.estoqueMinimo());
+        }
+
+        if (dto.estoqueMaximo() != null) {
+            produto.setEstoqueMaximo(dto.estoqueMaximo());
         }
 
         if (dto.categoriaId() != null) {

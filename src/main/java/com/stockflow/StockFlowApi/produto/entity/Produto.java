@@ -30,6 +30,12 @@ public class Produto {
     private String nome;
 
     @Column(nullable = false)
+    private Long estoqueMinimo;
+
+    @Column(nullable = false)
+    private Long estoqueMaximo;
+
+    @Column(nullable = false)
     private String descricao;
 
     @Column(nullable = false)
@@ -38,11 +44,13 @@ public class Produto {
     @CreationTimestamp
     private LocalDateTime dataCadastro;
 
-    public Produto(String codigo, String nome, String descricao, Categoria categoria) {
+    public Produto(String codigo, String nome, String descricao, Long estoqueMinimo, Long estoqueMaximo, Categoria categoria) {
         this.codigo = codigo;
-        this.categoria = categoria;
         this.nome = nome;
         this.descricao = descricao;
+        this.estoqueMinimo = estoqueMinimo;
+        this.estoqueMaximo = estoqueMaximo;
+        this.categoria = categoria;
     }
 
 }

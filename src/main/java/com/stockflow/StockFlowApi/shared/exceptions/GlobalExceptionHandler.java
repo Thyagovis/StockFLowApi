@@ -52,7 +52,7 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 400,
                 "Bad Request",
-                "Corpo JSON Invalido - ["+(fieldError == null ? "" : fieldError.getField()+"] "+fieldError.getDefaultMessage()),
+                "["+(fieldError == null ? "" : fieldError.getField()+"] "+fieldError.getDefaultMessage()),
                 request.getRequestURI()
         );
 
@@ -66,7 +66,7 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 409,
                 "Conflict",
-                "Conflito: "+exception.getMessage(),
+                exception.getMessage(),
                 request.getRequestURI()
         );
 
@@ -80,11 +80,25 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 404,
                 "Not Found",
-                "Não encontrado: "+exception.getMessage(),
+                exception.getMessage(),
                 request.getRequestURI()
         );
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorMessageResponse> handleIllegalArgumentException(IllegalArgumentException exception, HttpServletRequest request) {
+
+        var response = new ErrorMessageResponse(
+                LocalDateTime.now(),
+                422,
+                "Unprocessable Entity",
+                exception.getMessage(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_CONTENT).body(response);
     }
 
 }

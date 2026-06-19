@@ -37,4 +37,18 @@ public class MovimentacaoMapper {
         );
     }
 
+    public static MovimentacaoLoteSummaryDTO toMovimentacaoLoteSummaryDTO(MovimentacaoLote movimentacaoLote) {
+        if (movimentacaoLote == null) {
+            return null;
+        }
+
+        return new MovimentacaoLoteSummaryDTO(
+                movimentacaoLote.getId(),
+                movimentacaoLote.getTipoMovimentacao(),
+                movimentacaoLote.getOrigemMovimentacao(),
+                UsuarioMapper.paraUsuarioSummaryDTO(movimentacaoLote.getUsuario()),
+                movimentacaoLote.getDataRegistro()
+        );
+    }
+
 }

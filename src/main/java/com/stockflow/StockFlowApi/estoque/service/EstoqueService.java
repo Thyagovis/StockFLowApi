@@ -1,15 +1,19 @@
 package com.stockflow.StockFlowApi.estoque.service;
 
-import com.stockflow.StockFlowApi.estoque.dto.EstoqueRequestDTO;
+import com.stockflow.StockFlowApi.estoque.dto.EstoqueMapper;
+import com.stockflow.StockFlowApi.estoque.dto.EstoqueMovementDTO;
+import com.stockflow.StockFlowApi.estoque.dto.EstoquePatchDTO;
 import com.stockflow.StockFlowApi.estoque.dto.EstoqueResponseDTO;
 import com.stockflow.StockFlowApi.estoque.entity.Estoque;
 import com.stockflow.StockFlowApi.estoque.repository.EstoqueRepository;
 import com.stockflow.StockFlowApi.produto.entity.Produto;
 import com.stockflow.StockFlowApi.produto.repository.ProdutoRepository;
+import com.stockflow.StockFlowApi.shared.exceptions.NotFoundException;
+import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -20,10 +24,10 @@ public class EstoqueService {
     private final ProdutoRepository produtoRepository;
 
     public List<EstoqueResponseDTO> listarTodos() {
-
+        System.out.println("Listando todos os estoques");
         return estoqueRepository.findAll()
                 .stream()
-                .map(this::toResponseDTO)
+                .map(EstoqueMapper::toResponseDTO)
                 .toList();
     }
 
@@ -33,52 +37,45 @@ public class EstoqueService {
         Estoque estoque = estoqueRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Estoque não encontrado"));
 
-        return toResponseDTO(estoque);
+        return EstoqueMapper.toResponseDTO(estoque);
     }
 
 
-    public EstoqueResponseDTO criar(EstoqueRequestDTO dto) {
-
-        validar(dto);
+    @Transactional
+    public EstoqueResponseDTO movimentarEstoque(@Valid EstoqueMovementDTO dto) {
 
         Produto produto = produtoRepository.findById(dto.produtoId())
-                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+                .orElseThrow(() -> new NotFoundException("Produto não encontrado"));
 
-        Estoque estoque = new Estoque();
+        Estoque estoque = estoqueRepository.findByProdutoId(dto.produtoId())
+                .orElseGet(() -> new Estoque(0L, 0L, produto));
 
-        estoque.setProduto(produto);
-        estoque.setQuantidadeAtual(dto.quantidadeAtual());
-        estoque.setQuantidadeReservada(dto.quantidadeReservada());
-        estoque.setEstoqueMinimo(dto.estoqueMinimo());
-        estoque.setEstoqueMaximo(dto.estoqueMaximo());
-        estoque.setUltimaAtualizacao(LocalDateTime.now());
 
-        Estoque salvo = estoqueRepository.save(estoque);
+        switch (dto.tipoMovimentacao()) {
+            case ENTRADA -> estoque.adicionarEstoque(dto.quantidadeMovimentada());
+            case SAIDA -> estoque.removerEstoque(dto.quantidadeMovimentada());
+            case AJUSTE -> estoque.ajustarEstoque(dto.quantidadeMovimentada());
+        }
 
-        return toResponseDTO(salvo);
+        return EstoqueMapper.toResponseDTO(estoqueRepository.saveAndFlush(estoque));
     }
 
-
-    public EstoqueResponseDTO atualizar(Long id, EstoqueRequestDTO dto) {
-
-        validar(dto);
+    @Transactional
+    public EstoqueResponseDTO atualizar(Long id, EstoquePatchDTO dto) {
 
         Estoque estoque = estoqueRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Estoque não encontrado"));
+                .orElseThrow(() -> new NotFoundException("Estoque não encontrado"));
 
-        Produto produto = produtoRepository.findById(dto.produtoId())
-                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
 
-        estoque.setProduto(produto);
-        estoque.setQuantidadeAtual(dto.quantidadeAtual());
-        estoque.setQuantidadeReservada(dto.quantidadeReservada());
-        estoque.setEstoqueMinimo(dto.estoqueMinimo());
-        estoque.setEstoqueMaximo(dto.estoqueMaximo());
-        estoque.setUltimaAtualizacao(LocalDateTime.now());
+        if (dto.quantidadeDisponivel() != null) {
+            estoque.setQuantidadeDisponivel(dto.quantidadeDisponivel());
+        }
 
-        Estoque atualizado = estoqueRepository.save(estoque);
+        if (dto.quantidadeReservada() != null) {
+            estoque.setQuantidadeReservada(dto.quantidadeReservada());
+        }
 
-        return toResponseDTO(atualizado);
+        return EstoqueMapper.toResponseDTO(estoqueRepository.saveAndFlush(estoque));
     }
 
 
@@ -88,39 +85,6 @@ public class EstoqueService {
                 .orElseThrow(() -> new RuntimeException("Estoque não encontrado"));
 
         estoqueRepository.delete(estoque);
-    }
-
-
-    private void validar(EstoqueRequestDTO dto) {
-
-        if (dto.quantidadeAtual() < 0) {
-            throw new RuntimeException("Quantidade atual não pode ser negativa");
-        }
-
-        if (dto.quantidadeReservada() < 0) {
-            throw new RuntimeException("Quantidade reservada não pode ser negativa");
-        }
-
-        if (dto.quantidadeReservada() > dto.quantidadeAtual()) {
-            throw new RuntimeException("Quantidade reservada não pode ser maior que a quantidade atual");
-        }
-
-        if (dto.estoqueMinimo() > dto.estoqueMaximo()) {
-            throw new RuntimeException("Estoque mínimo não pode ser maior que estoque máximo");
-        }
-    }
-
-
-    private EstoqueResponseDTO toResponseDTO(Estoque estoque) {
-
-        return new EstoqueResponseDTO(
-                estoque.getId(),
-                estoque.getQuantidadeAtual(),
-                estoque.getQuantidadeReservada(),
-                estoque.getEstoqueMinimo(),
-                estoque.getEstoqueMaximo(),
-                estoque.getUltimaAtualizacao()
-        );
     }
     
 }

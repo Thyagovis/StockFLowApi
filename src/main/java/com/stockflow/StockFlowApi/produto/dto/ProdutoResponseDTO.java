@@ -9,6 +9,8 @@ public record ProdutoResponseDTO(
         String codigo,
         String nome,
         String descricao,
+        Long estoqueMinimo,
+        Long estoqueMaximo,
         CategoriaSummaryDTO categoria,
         LocalDateTime dataCadastro,
         boolean ativo

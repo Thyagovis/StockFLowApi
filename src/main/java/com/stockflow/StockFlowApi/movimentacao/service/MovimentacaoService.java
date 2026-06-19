@@ -1,11 +1,13 @@
 package com.stockflow.StockFlowApi.movimentacao.service;
 
+import com.stockflow.StockFlowApi.estoque.dto.EstoqueMovementDTO;
+import com.stockflow.StockFlowApi.estoque.service.EstoqueService;
 import com.stockflow.StockFlowApi.movimentacao.dto.MovimentacaoLoteRequestDTO;
 import com.stockflow.StockFlowApi.movimentacao.dto.MovimentacaoLoteResponseDTO;
 import com.stockflow.StockFlowApi.movimentacao.dto.MovimentacaoMapper;
+import com.stockflow.StockFlowApi.movimentacao.dto.MovimentacaoLoteSummaryDTO;
 import com.stockflow.StockFlowApi.movimentacao.entity.ItemMovimentacao;
 import com.stockflow.StockFlowApi.movimentacao.entity.MovimentacaoLote;
-import com.stockflow.StockFlowApi.movimentacao.repository.ItemMovimentacaoRepository;
 import com.stockflow.StockFlowApi.movimentacao.repository.MovimentacaoLoteRepository;
 import com.stockflow.StockFlowApi.produto.entity.Produto;
 import com.stockflow.StockFlowApi.produto.repository.ProdutoRepository;
@@ -28,10 +30,8 @@ import java.util.List;
 public class MovimentacaoService {
 
     private final MovimentacaoLoteRepository movimentacaoLoteRepository;
-
-    private final ItemMovimentacaoRepository itemMovimentacaoRepository;
-
     private final ProdutoRepository produtoRepository;
+    private final EstoqueService estoqueService;
 
     @Transactional
     public MovimentacaoLoteResponseDTO save(MovimentacaoLoteRequestDTO dto) {
@@ -61,15 +61,24 @@ public class MovimentacaoService {
                     movimentacao
             );
 
-            movimentacao.adicionarItem(item);
+            estoqueService.movimentarEstoque(new EstoqueMovementDTO(
+                    itemDTO.produtoId(),
+                    itemDTO.quantidade(),
+                    movimentacao.getTipoMovimentacao()
+            ));
 
-            itemMovimentacaoRepository.save(item);
+            movimentacao.adicionarItem(item);
         });
 
         return MovimentacaoMapper.toMovimentacaoResponseDTO(movimentacaoLoteRepository.save(movimentacao));
     }
 
-    public List<MovimentacaoLoteResponseDTO> listAll() {
+    public List<MovimentacaoLoteSummaryDTO> listAllSummary() {
+        return movimentacaoLoteRepository.findAll()
+                .stream().map(MovimentacaoMapper::toMovimentacaoLoteSummaryDTO).toList();
+    }
+
+    public List<MovimentacaoLoteResponseDTO> listAllFull() {
         return movimentacaoLoteRepository.findAll()
                 .stream().map(MovimentacaoMapper::toMovimentacaoResponseDTO).toList();
     }
