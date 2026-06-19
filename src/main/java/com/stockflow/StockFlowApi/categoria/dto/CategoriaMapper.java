@@ -18,4 +18,15 @@ public class CategoriaMapper {
         );
     }
 
+    public static CategoriaSummaryDTO toSummaryDTO(Categoria categoria) {
+        if (categoria == null) {
+            return null;
+        }
+
+        return new CategoriaSummaryDTO(
+                categoria.getId(),
+                categoria.getNome()
+        );
+    }
+
 }

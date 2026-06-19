@@ -41,7 +41,7 @@ public class MovimentacaoService {
         var movimentacao = new MovimentacaoLote(
                 dto.tipoMovimentacao(),
                 dto.origemMovimentacao(),
-                dto.observacao(),
+                dto.observacao().trim(),
                 usuario
         );
 

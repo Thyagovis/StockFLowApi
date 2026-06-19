@@ -1,5 +1,7 @@
 package com.stockflow.StockFlowApi.produto.dto;
 
+import com.stockflow.StockFlowApi.categoria.dto.CategoriaSummaryDTO;
+
 import java.time.LocalDateTime;
 
 public record ProdutoResponseDTO(
@@ -7,7 +9,7 @@ public record ProdutoResponseDTO(
         String codigo,
         String nome,
         String descricao,
-        Long categoriaId,
+        CategoriaSummaryDTO categoria,
         LocalDateTime dataCadastro,
         boolean ativo
 ) {

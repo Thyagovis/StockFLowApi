@@ -1,5 +1,6 @@
 package com.stockflow.StockFlowApi.produto.dto;
 
+import com.stockflow.StockFlowApi.categoria.dto.CategoriaMapper;
 import com.stockflow.StockFlowApi.produto.entity.Produto;
 
 public class ProdutoMapper {
@@ -21,7 +22,7 @@ public class ProdutoMapper {
                 produto.getCodigo(),
                 produto.getNome(),
                 produto.getDescricao(),
-                produto.getCategoria().getId(),
+                CategoriaMapper.toSummaryDTO(produto.getCategoria()),
                 produto.getDataCadastro(),
                 produto.isAtivo()
         );

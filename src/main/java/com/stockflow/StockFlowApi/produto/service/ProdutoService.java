@@ -8,6 +8,7 @@ import com.stockflow.StockFlowApi.produto.dto.ProdutoPatchDTO;
 import com.stockflow.StockFlowApi.produto.dto.ProdutoResponseDTO;
 import com.stockflow.StockFlowApi.produto.entity.Produto;
 import com.stockflow.StockFlowApi.produto.repository.ProdutoRepository;
+import com.stockflow.StockFlowApi.shared.exceptions.ConflictException;
 import com.stockflow.StockFlowApi.shared.exceptions.NotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +42,11 @@ public class ProdutoService {
     @Transactional
     public ProdutoResponseDTO criar(ProdutoCreateDTO dto) {
 
-        Categoria categoria = categoriaRepository.findById(dto.categoriaId())
+        if (produtoRepository.existsByCodigo(dto.nome().trim())) {
+            throw new ConflictException("Produto existente ou inativo");
+        }
+
+        Categoria categoria = categoriaRepository.findByIdAndAtivoTrue(dto.categoriaId())
                 .orElseThrow(() -> new NotFoundException("Categoria não encontrada"));
 
         var produto = new Produto(
@@ -62,6 +67,10 @@ public class ProdutoService {
                 .orElseThrow(() -> new NotFoundException("Produto não encontrado"));
 
         if (dto.codigo() != null) {
+            if (produtoRepository.existsByCodigoAndIdNot(dto.codigo().trim(), id)) {
+                throw new ConflictException("Código já registrado");
+            }
+
             produto.setCodigo(dto.codigo().trim());
         }
 
@@ -74,7 +83,7 @@ public class ProdutoService {
         }
 
         if (dto.categoriaId() != null) {
-            var categoria = categoriaRepository.findById(dto.categoriaId())
+            var categoria = categoriaRepository.findByIdAndAtivoTrue(dto.categoriaId())
                     .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
 
             produto.setCategoria(categoria);
