@@ -1,9 +1,13 @@
 package com.stockflow.StockFlowApi.produto.controller;
 
-import com.stockflow.StockFlowApi.produto.dto.ProdutoRequestDTO;
+import com.stockflow.StockFlowApi.produto.dto.ProdutoCreateDTO;
+import com.stockflow.StockFlowApi.produto.dto.ProdutoPatchDTO;
 import com.stockflow.StockFlowApi.produto.dto.ProdutoResponseDTO;
 import com.stockflow.StockFlowApi.produto.service.ProdutoService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,35 +20,38 @@ public class ProdutoController {
     private final ProdutoService produtoService;
 
     @GetMapping
-    public List<ProdutoResponseDTO> listarTodos() {
-        return produtoService.listarTodos();
+    public ResponseEntity<List<ProdutoResponseDTO>> listarTodos() {
+        var response = produtoService.listarTodos();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 
     @GetMapping("/{id}")
-    public ProdutoResponseDTO buscarPorId(@PathVariable Long id) {
-        return produtoService.buscarPorId(id);
+    public ResponseEntity<ProdutoResponseDTO> buscarPorId(@PathVariable Long id) {
+        var response =  produtoService.buscarPorId(id);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 
     @PostMapping
-    public ProdutoResponseDTO criar(@RequestBody ProdutoRequestDTO dto) {
-        return produtoService.criar(dto);
+    public ResponseEntity<ProdutoResponseDTO> criar(@RequestBody ProdutoCreateDTO dto) {
+        var response = produtoService.criar(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-
-    @PutMapping("/{id}")
-    public ProdutoResponseDTO atualizar(
+    @PatchMapping("/{id}")
+    public ResponseEntity<ProdutoResponseDTO> atualizar(
             @PathVariable Long id,
-            @RequestBody ProdutoRequestDTO dto) {
-
-        return produtoService.atualizar(id, dto);
+            @RequestBody @Valid ProdutoPatchDTO dto
+    ) {
+        var response = produtoService.atualizar(id, dto);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
-
 
     @DeleteMapping("/{id}")
-    public void deletar(@PathVariable Long id) {
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
         produtoService.deletar(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
     
 }

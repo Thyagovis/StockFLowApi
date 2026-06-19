@@ -2,15 +2,11 @@ package com.stockflow.StockFlowApi.movimentacao.entity;
 
 import com.stockflow.StockFlowApi.produto.entity.Produto;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
 public class ItemMovimentacao {
 
@@ -18,21 +14,35 @@ public class ItemMovimentacao {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "movimentacaolote_id")
-    private MovimentacaoLote movimentacaoLote;
 
-    @ManyToOne
-    @JoinColumn(name = "produto_id")
-    private Produto produto;
 
     @Column(nullable = false)
-    private BigDecimal quantidade;
+    private Long quantidade;
 
     @Column(nullable = false)
     private BigDecimal custoUnitario;
 
     @Column(nullable = false)
     private BigDecimal custoTotal;
+
+
+
+    @ManyToOne
+    @JoinColumn(name = "produto_id")
+    private Produto produto;
+
+    @ManyToOne
+    @JoinColumn(name = "movimentacao_lote_id")
+    private MovimentacaoLote movimentacaoLote;
+
+    protected ItemMovimentacao() {}
+
+    public ItemMovimentacao(Long quantidade, BigDecimal custoUnitario, BigDecimal custoTotal, Produto produto, MovimentacaoLote movimentacaoLote) {
+        this.quantidade = quantidade;
+        this.custoUnitario = custoUnitario;
+        this.custoTotal = custoTotal;
+        this.produto = produto;
+        this.movimentacaoLote = movimentacaoLote;
+    }
 
 }

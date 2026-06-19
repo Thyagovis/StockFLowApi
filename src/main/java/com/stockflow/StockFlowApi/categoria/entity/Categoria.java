@@ -1,17 +1,15 @@
 package com.stockflow.StockFlowApi.categoria.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDateTime;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Entity
+@SQLDelete(sql = "UPDATE categoria SET ativo = false WHERE id = ?")
 public class Categoria {
 
     @Id
@@ -24,10 +22,18 @@ public class Categoria {
     @Column(nullable = false)
     private String descricao;
 
-    @Column(nullable = false)
-    private boolean isAtivo;
-
     @CreationTimestamp
     private LocalDateTime dataCadastro;
+
+    @Column(nullable = false)
+    private boolean ativo = true;
+
+
+    protected Categoria() {}
+
+    public Categoria(String nome, String descricao) {
+        this.nome = nome;
+        this.descricao = descricao;
+    }
 
 }

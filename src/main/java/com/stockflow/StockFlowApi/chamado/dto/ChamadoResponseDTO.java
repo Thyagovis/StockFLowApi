@@ -4,6 +4,7 @@ import com.stockflow.StockFlowApi.chamado.enums.StatusChamado;
 import com.stockflow.StockFlowApi.chamado.enums.TipoChamado;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public record ChamadoResponseDTO(
 
@@ -13,7 +14,9 @@ public record ChamadoResponseDTO(
         StatusChamado statusChamado,
         String descricao,
         LocalDateTime dataAbertura,
-        LocalDateTime dataFechamento
+        LocalDateTime dataFechamento,
+
+        List<ItemChamadoDTO> itens
 
 ) {
 }

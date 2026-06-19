@@ -52,7 +52,7 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 400,
                 "Bad Request",
-                "Corpo JSON Invalido - "+(fieldError == null ? "" : "["+fieldError.getField()+"] "+fieldError.getDefaultMessage()),
+                "Corpo JSON Invalido - ["+(fieldError == null ? "" : fieldError.getField()+"] "+fieldError.getDefaultMessage()),
                 request.getRequestURI()
         );
 
@@ -73,8 +73,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ErrorMessageResponse> handleUserNotFoundException(UserNotFoundException exception, HttpServletRequest request) {
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ErrorMessageResponse> handleNotFoundException(NotFoundException exception, HttpServletRequest request) {
 
         var response = new ErrorMessageResponse(
                 LocalDateTime.now(),

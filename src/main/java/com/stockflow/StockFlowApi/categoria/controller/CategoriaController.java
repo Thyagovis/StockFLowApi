@@ -1,9 +1,13 @@
 package com.stockflow.StockFlowApi.categoria.controller;
 
-import com.stockflow.StockFlowApi.categoria.dto.CategoriaRequestDTO;
+import com.stockflow.StockFlowApi.categoria.dto.CategoriaCreateDTO;
+import com.stockflow.StockFlowApi.categoria.dto.CategoriaPatchDTO;
 import com.stockflow.StockFlowApi.categoria.dto.CategoriaResponseDTO;
 import com.stockflow.StockFlowApi.categoria.service.CategoriaService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,34 +21,45 @@ public class CategoriaController {
 
     
     @GetMapping
-    public List<CategoriaResponseDTO> listarTodas() {
-        return categoriaService.listarTodas();
+    public ResponseEntity<List<CategoriaResponseDTO>> listarTodas() {
+        var response = categoriaService.listarTodas();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 
     @GetMapping("/{id}")
-    public CategoriaResponseDTO buscarPorId(@PathVariable Long id) {
-        return categoriaService.buscarPorId(id);
+    public ResponseEntity<CategoriaResponseDTO> buscarPorId(
+            @PathVariable Long id
+    ) {
+        var response = categoriaService.buscarPorId(id);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 
     @PostMapping
-    public CategoriaResponseDTO criar(@RequestBody CategoriaRequestDTO dto) {
-        return categoriaService.criar(dto);
+    public ResponseEntity<CategoriaResponseDTO> criar(
+            @RequestBody @Valid CategoriaCreateDTO dto
+    ) {
+        var response = categoriaService.criar(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
 
-    @PutMapping("/{id}")
-    public CategoriaResponseDTO atualizar(
+    @PatchMapping("/{id}")
+    public ResponseEntity<CategoriaResponseDTO> atualizar(
             @PathVariable Long id,
-            @RequestBody CategoriaRequestDTO dto) {
-
-        return categoriaService.atualizar(id, dto);
+            @RequestBody @Valid CategoriaPatchDTO dto
+    ) {
+        var response = categoriaService.atualizar(id, dto);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 
     @DeleteMapping("/{id}")
-    public void deletar(@PathVariable Long id) {
+    public ResponseEntity<Void> deletar(
+            @PathVariable Long id
+    ) {
         categoriaService.deletar(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

@@ -2,10 +2,8 @@ package com.stockflow.StockFlowApi.chamado.dto;
 
 import java.math.BigDecimal;
 
-public record ItemChamadoResponseDTO(
+public record ItemChamadoDTO(
 
-        Long id,
-        Long chamadoId,
         Long produtoId,
         BigDecimal quantidade,
         String observacao

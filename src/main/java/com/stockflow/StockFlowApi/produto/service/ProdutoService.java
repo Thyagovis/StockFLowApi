@@ -2,14 +2,18 @@ package com.stockflow.StockFlowApi.produto.service;
 
 import com.stockflow.StockFlowApi.categoria.entity.Categoria;
 import com.stockflow.StockFlowApi.categoria.repository.CategoriaRepository;
-import com.stockflow.StockFlowApi.produto.dto.ProdutoRequestDTO;
+import com.stockflow.StockFlowApi.produto.dto.ProdutoCreateDTO;
+import com.stockflow.StockFlowApi.produto.dto.ProdutoMapper;
+import com.stockflow.StockFlowApi.produto.dto.ProdutoPatchDTO;
 import com.stockflow.StockFlowApi.produto.dto.ProdutoResponseDTO;
 import com.stockflow.StockFlowApi.produto.entity.Produto;
 import com.stockflow.StockFlowApi.produto.repository.ProdutoRepository;
+import com.stockflow.StockFlowApi.shared.exceptions.ConflictException;
+import com.stockflow.StockFlowApi.shared.exceptions.NotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -22,80 +26,84 @@ public class ProdutoService {
     public List<ProdutoResponseDTO> listarTodos() {
         return produtoRepository.findAll()
                 .stream()
-                .map(this::toResponseDTO)
+                .map(ProdutoMapper::toResponseDTO)
                 .toList();
     }
 
 
     public ProdutoResponseDTO buscarPorId(Long id) {
-        return toResponseDTO(buscarEntityPorId(id));
+        var produto = produtoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Produto não encontrado"));
+
+        return ProdutoMapper.toResponseDTO(produto);
     }
 
 
-    public ProdutoResponseDTO criar(ProdutoRequestDTO dto) {
+    @Transactional
+    public ProdutoResponseDTO criar(ProdutoCreateDTO dto) {
 
-        validar(dto);
-
-        Categoria categoria = categoriaRepository.findById(dto.categoriaId())
-                .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
-
-        Produto produto = new Produto();
-        produto.setNome(dto.nome());
-        produto.setDescricao(dto.descricao());
-        produto.setAtivo(dto.ativo());
-        produto.setCategoria(categoria);
-        produto.setDataCadastro(LocalDateTime.now());
-
-        return toResponseDTO(produtoRepository.save(produto));
-    }
-
-
-    public ProdutoResponseDTO atualizar(Long id, ProdutoRequestDTO dto) {
-
-        validar(dto);
-
-        Produto produto = buscarEntityPorId(id);
-
-        Categoria categoria = categoriaRepository.findById(dto.categoriaId())
-                .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
-
-        produto.setNome(dto.nome());
-        produto.setDescricao(dto.descricao());
-        produto.setAtivo(dto.ativo());
-        produto.setCategoria(categoria);
-
-        return toResponseDTO(produtoRepository.save(produto));
-    }
-
-
-    public void deletar(Long id) {
-        Produto produto = buscarEntityPorId(id);
-        produtoRepository.delete(produto);
-    }
-
-
-    private Produto buscarEntityPorId(Long id) {
-        return produtoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
-    }
-
-
-    private void validar(ProdutoRequestDTO dto) {
-        if (dto.nome() == null || dto.nome().isBlank()) {
-            throw new RuntimeException("Nome do produto é obrigatório");
+        if (produtoRepository.existsByCodigo(dto.nome().trim())) {
+            throw new ConflictException("Produto existente ou inativo");
         }
+
+        Categoria categoria = categoriaRepository.findByIdAndAtivoTrue(dto.categoriaId())
+                .orElseThrow(() -> new NotFoundException("Categoria não encontrada"));
+
+        var produto = new Produto(
+                dto.codigo().trim(),
+                dto.nome().trim().toLowerCase(),
+                dto.descricao().trim().toLowerCase(),
+                categoria
+        );
+
+        return ProdutoMapper.toResponseDTO(produtoRepository.save(produto));
     }
 
 
-    private ProdutoResponseDTO toResponseDTO(Produto produto) {
-        return new ProdutoResponseDTO(
-                produto.getId(),
-                produto.getCategoria() != null ? produto.getCategoria().getId() : null,
-                produto.getNome(),
-                produto.getDescricao(),
-                produto.isAtivo(),
-                produto.getDataCadastro()
-        );
+    @Transactional
+    public ProdutoResponseDTO atualizar(Long id, ProdutoPatchDTO dto) {
+
+        var produto = produtoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Produto não encontrado"));
+
+        if (dto.codigo() != null) {
+            if (produtoRepository.existsByCodigoAndIdNot(dto.codigo().trim(), id)) {
+                throw new ConflictException("Código já registrado");
+            }
+
+            produto.setCodigo(dto.codigo().trim());
+        }
+
+        if (dto.nome() != null) {
+            produto.setNome(dto.nome().trim().toLowerCase());
+        }
+
+        if (dto.descricao() != null) {
+            produto.setDescricao(dto.descricao().trim().toLowerCase());
+        }
+
+        if (dto.categoriaId() != null) {
+            var categoria = categoriaRepository.findByIdAndAtivoTrue(dto.categoriaId())
+                    .orElseThrow(() -> new RuntimeException("Categoria não encontrada"));
+
+            produto.setCategoria(categoria);
+        }
+
+        if (dto.ativo() != null) {
+            produto.setAtivo(dto.ativo());
+        }
+
+        return ProdutoMapper.toResponseDTO(produtoRepository.save(produto));
+    }
+
+
+    @Transactional
+    public void deletar(Long id) {
+        if (!produtoRepository.existsById(id)) {
+            throw new NotFoundException("Produto não encontrado");
+        }
+
+        produtoRepository.deleteById(id);
     }
 
 }

@@ -18,17 +18,15 @@ public class ItemChamado {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "chamado_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "chamado_id")
     private Chamado chamado;
 
     @ManyToOne
-    @JoinColumn(name = "produto_id", nullable = false)
+    @JoinColumn(name = "produto_id")
     private Produto produto;
 
-    @Column(nullable = false)
-    private Long quantidade;
+    private BigDecimal quantidade;
 
-    @Column(nullable = false)
     private String observacao;
 }
