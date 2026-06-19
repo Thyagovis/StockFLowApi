@@ -4,9 +4,12 @@ import java.time.LocalDateTime;
 
 public record ProdutoResponseDTO(
         Long id,
-        Long categoriaId,
+        String codigo,
         String nome,
         String descricao,
-        boolean ativo,
-        LocalDateTime dataCadastro
-) {}
+        Long categoriaId,
+        LocalDateTime dataCadastro,
+        boolean ativo
+) {
+
+}
