@@ -10,7 +10,7 @@ public record ItemMovimentacaoRequestDTO(
         @NotNull @Positive
         Long produtoId,
 
-        @NotNull @Positive
+        @NotNull
         Long quantidade,
 
         @NotNull @Positive

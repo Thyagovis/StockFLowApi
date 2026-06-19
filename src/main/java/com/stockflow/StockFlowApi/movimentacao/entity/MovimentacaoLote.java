@@ -20,7 +20,6 @@ public class MovimentacaoLote {
     private Long id;
 
 
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TipoMovimentacao tipoMovimentacao;
@@ -37,6 +36,7 @@ public class MovimentacaoLote {
 
     @OneToMany(
             mappedBy = "movimentacaoLote",
+            cascade = CascadeType.ALL,
             fetch = FetchType.LAZY
     )
     private List<ItemMovimentacao> itens = new ArrayList<>();

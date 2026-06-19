@@ -2,6 +2,7 @@ package com.stockflow.StockFlowApi.movimentacao.controller;
 
 import com.stockflow.StockFlowApi.movimentacao.dto.MovimentacaoLoteRequestDTO;
 import com.stockflow.StockFlowApi.movimentacao.dto.MovimentacaoLoteResponseDTO;
+import com.stockflow.StockFlowApi.movimentacao.dto.MovimentacaoLoteSummaryDTO;
 import com.stockflow.StockFlowApi.movimentacao.service.MovimentacaoService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -26,8 +27,15 @@ public class MovimentacaoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<MovimentacaoLoteResponseDTO>> listAll() {
-        var response = movimentacaoService.listAll();
+    public ResponseEntity<List<MovimentacaoLoteResponseDTO>> listAllFull() {
+        var response = movimentacaoService.listAllFull();
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/resumo")
+    public ResponseEntity<List<MovimentacaoLoteSummaryDTO>> listAllSummary() {
+        var response = movimentacaoService.listAllSummary();
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

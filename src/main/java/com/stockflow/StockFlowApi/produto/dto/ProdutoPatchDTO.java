@@ -14,6 +14,12 @@ public record ProdutoPatchDTO(
         @NullOrNotBlank
         String descricao,
 
+        @Positive(message = "Não pode ser negativo")
+        Long estoqueMinimo,
+
+        @Positive(message = "Não pode ser negativo")
+        Long estoqueMaximo,
+
         @Positive
         Long categoriaId,
 

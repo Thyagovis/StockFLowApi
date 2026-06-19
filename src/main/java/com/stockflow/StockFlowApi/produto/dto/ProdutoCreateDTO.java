@@ -6,16 +6,25 @@ import jakarta.validation.constraints.Positive;
 
 public record ProdutoCreateDTO(
 
-        @NotBlank
+        @NotBlank(message = "Não pode ser vazio")
         String codigo,
 
-        @NotBlank
+        @NotBlank(message = "Não pode ser vazio")
         String nome,
 
-        @NotNull
+        @NotNull(message = "Não pode ser nulo")
         String descricao,
 
-        @NotNull @Positive
+        @NotNull(message = "Não pode ser nulo")
+        @Positive(message = "Não pode ser negativo")
+        Long estoqueMaximo,
+
+        @NotNull(message = "Não pode ser nulo")
+        @Positive(message = "Não pode ser negativo")
+        Long estoqueMinimo,
+
+        @NotNull(message = "Não pode ser nulo")
+        @Positive(message = "Não pode ser negativo")
         Long categoriaId
 
 ) {}

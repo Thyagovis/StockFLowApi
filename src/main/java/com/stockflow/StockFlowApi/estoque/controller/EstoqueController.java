@@ -1,9 +1,12 @@
 package com.stockflow.StockFlowApi.estoque.controller;
 
-import com.stockflow.StockFlowApi.estoque.dto.EstoqueRequestDTO;
+import com.stockflow.StockFlowApi.estoque.dto.EstoquePatchDTO;
 import com.stockflow.StockFlowApi.estoque.dto.EstoqueResponseDTO;
 import com.stockflow.StockFlowApi.estoque.service.EstoqueService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,35 +19,34 @@ public class EstoqueController {
     private final EstoqueService estoqueService;
 
     @GetMapping
-    public List<EstoqueResponseDTO> listarTodos() {
-        return estoqueService.listarTodos();
+    public ResponseEntity<List<EstoqueResponseDTO>> listarTodos() {
+        System.out.println("Listando todos os estoques");
+        var response = estoqueService.listarTodos();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 
     @GetMapping("/{id}")
-    public EstoqueResponseDTO buscarPorId(@PathVariable Long id) {
-        return estoqueService.buscarPorId(id);
+    public ResponseEntity<EstoqueResponseDTO> buscarPorId(@PathVariable Long id) {
+        var response = estoqueService.buscarPorId(id);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 
-    @PostMapping
-    public EstoqueResponseDTO criar(@RequestBody EstoqueRequestDTO dto) {
-        return estoqueService.criar(dto);
-    }
-
-
-    @PutMapping("/{id}")
-    public EstoqueResponseDTO atualizar(
+    @PatchMapping("/{id}")
+    public ResponseEntity<EstoqueResponseDTO> atualizar(
             @PathVariable Long id,
-            @RequestBody EstoqueRequestDTO dto) {
-
-        return estoqueService.atualizar(id, dto);
+            @RequestBody @Valid EstoquePatchDTO dto
+    ) {
+        var response = estoqueService.atualizar(id, dto);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 
     @DeleteMapping("/{id}")
-    public void deletar(@PathVariable Long id) {
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
         estoqueService.deletar(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
     
 }
