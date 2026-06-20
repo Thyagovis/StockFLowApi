@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/estoques")
+@RequestMapping("/api/estoques")
 @RequiredArgsConstructor
 public class EstoqueController {
 
@@ -20,7 +20,6 @@ public class EstoqueController {
 
     @GetMapping
     public ResponseEntity<List<EstoqueResponseDTO>> listarTodos() {
-        System.out.println("Listando todos os estoques");
         var response = estoqueService.listarTodos();
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

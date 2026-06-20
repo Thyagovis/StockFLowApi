@@ -4,10 +4,10 @@ import com.stockflow.StockFlowApi.shared.costraints.NullOrNotBlank;
 
 public record CategoriaPatchDTO(
 
-        @NullOrNotBlank
+        @NullOrNotBlank(message = "Não pode ser vazio")
         String nome,
 
-        @NullOrNotBlank
+        @NullOrNotBlank(message = "Não pode ser vazio")
         String descricao,
 
         Boolean ativo

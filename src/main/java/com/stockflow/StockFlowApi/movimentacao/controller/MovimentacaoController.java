@@ -3,6 +3,7 @@ package com.stockflow.StockFlowApi.movimentacao.controller;
 import com.stockflow.StockFlowApi.movimentacao.dto.MovimentacaoLoteRequestDTO;
 import com.stockflow.StockFlowApi.movimentacao.dto.MovimentacaoLoteResponseDTO;
 import com.stockflow.StockFlowApi.movimentacao.dto.MovimentacaoLoteSummaryDTO;
+import com.stockflow.StockFlowApi.movimentacao.enums.TipoMovimentacao;
 import com.stockflow.StockFlowApi.movimentacao.service.MovimentacaoService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/movimentacoes")
+@RequestMapping("/api/movimentacoes")
 @AllArgsConstructor
 public class MovimentacaoController {
 
@@ -27,15 +28,19 @@ public class MovimentacaoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<MovimentacaoLoteResponseDTO>> listAllFull() {
-        var response = movimentacaoService.listAllFull();
+    public ResponseEntity<List<MovimentacaoLoteResponseDTO>> listAllFull(
+            @RequestParam(name = "tipo", required = false) TipoMovimentacao tipo
+    ) {
+        var response = movimentacaoService.listAllFull(tipo);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/resumo")
-    public ResponseEntity<List<MovimentacaoLoteSummaryDTO>> listAllSummary() {
-        var response = movimentacaoService.listAllSummary();
+    public ResponseEntity<List<MovimentacaoLoteSummaryDTO>> listAllSummary(
+            @RequestParam(name = "tipo", required = false) TipoMovimentacao tipo
+    ) {
+        var response = movimentacaoService.listAllSummary(tipo);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

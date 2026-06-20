@@ -2,6 +2,7 @@ package com.stockflow.StockFlowApi.usuario.doc;
 
 import com.stockflow.StockFlowApi.shared.exceptions.ErrorMessageResponse;
 import com.stockflow.StockFlowApi.usuario.dto.UsuarioPatchDTO;
+import com.stockflow.StockFlowApi.usuario.dto.UsuarioRegisterDTO;
 import com.stockflow.StockFlowApi.usuario.dto.UsuarioResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -442,6 +443,143 @@ public interface UsuarioControllerDoc {
             @Valid
             @RequestBody
             UsuarioPatchDTO patchDTO
+    );
+
+    @Operation(
+            summary = "Registra usuários",
+            description = """
+                    Registra um novo usuário no sistema
+                    
+                    Endpoint restrito a administradores.
+            
+                    Necessário enviar:
+                    Authorization: Bearer <jwt>
+            
+                    Permissão requerida: ADMINISTRADOR
+                    """,
+            security = @SecurityRequirement(name = "bearerAuth"),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Usuário cadastrado com sucesso",
+                            content = @Content(
+                                    schema = @Schema(
+                                            implementation = UsuarioResponseDTO.class,
+                                            example = """
+                                                    {
+                                                      "id": 1,
+                                                      "nome": "João",
+                                                      "email": "joao@gmail.com",
+                                                      "login": "meuLogin@123",
+                                                      "cargo": "ADMINISTRADOR",
+                                                      "dataCriacao": "9999-12-12T00:00:00.000Z",
+                                                      "dataAtualizacao": "9999-12-12T00:00:00.000Z",
+                                                      "ativo": true
+                                                    }
+                                                    """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Corpo JSON mal formado",
+                            content = @Content(
+                                    schema = @Schema(
+                                            implementation = ErrorMessageResponse.class,
+                                            example = """
+                                                    {
+                                                      "timestamp": "9999-12-12T00:00:00.000Z",
+                                                      "status": 400,
+                                                      "error": "Bad Request",
+                                                      "message": "Corpo JSON mal formado",
+                                                      "path": "/usuarios"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Requisitante falhou na autenticação, token invalido ou expirado",
+                            content = @Content(
+                                    schema = @Schema(
+                                            implementation = ErrorMessageResponse.class,
+                                            example = """
+                                                    {
+                                                      "timestamp": "9999-12-12T00:00:00.000Z",
+                                                      "status": 401,
+                                                      "error": "Unauthorized",
+                                                      "message": "Falha ao Autenticar",
+                                                      "path": "/usuarios"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "Acesso negado, requisitante não tem permissão suficiente para o serviço",
+                            content = @Content(
+                                    schema = @Schema(
+                                            implementation = ErrorMessageResponse.class,
+                                            example = """
+                                                    {
+                                                      "timestamp": "9999-12-12T00:00:00.000Z",
+                                                      "status": 403,
+                                                      "error": "Forbidden",
+                                                      "message": "Acesso negado",
+                                                      "path": "/usuarios"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "409",
+                            description = "Usuário em conflito com o estado do servidor ou o banco. Geralmente por credenciais únicas já registradas",
+                            content = @Content(
+                                    schema = @Schema(
+                                            implementation = ErrorMessageResponse.class,
+                                            example = """
+                                                    {
+                                                      "timestamp": "9999-12-12T00:00:00.000Z",
+                                                      "status": 409,
+                                                      "error": "Conflict",
+                                                      "message": "Conflito",
+                                                      "path": "/usuarios"
+                                                    }
+                                                    """
+                                    )
+                            )
+                    )
+            }
+    )
+    ResponseEntity<UsuarioResponseDTO> registrar(
+
+            @RequestBody
+            @Valid
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Usuário a ser registrado",
+                    required = true,
+                    content = @Content(
+                            schema = @Schema(implementation = UsuarioRegisterDTO.class),
+                            examples = @ExampleObject(
+                                    name = "Login Válido",
+                                    description = "Um usuário válido com todos os campos no formato esperado",
+                                    value = """
+                                            {
+                                              "nome": "João",
+                                              "email": "joao@gmail.com",
+                                              "login": "meuLogin@123",
+                                              "senha": "senha@123",
+                                              "cargo": "ADMINISTRADOR"
+                                            }
+                                            """
+                            )
+                    )
+            )
+            UsuarioRegisterDTO registerDTO
+
     );
 
 }

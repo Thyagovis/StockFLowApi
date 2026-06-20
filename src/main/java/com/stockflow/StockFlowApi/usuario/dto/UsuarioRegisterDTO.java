@@ -7,19 +7,20 @@ import jakarta.validation.constraints.NotNull;
 
 public record UsuarioRegisterDTO(
 
-        @NotBlank
+        @NotBlank(message = "Não deve ser vazio")
         String nome,
 
-        @Email @NotBlank
+        @Email(message = "Deve ser um email valido")
+        @NotBlank(message = "Não deve ser vazio")
         String email,
 
-        @NotBlank
+        @NotBlank(message = "Não deve ser vazio")
         String login,
 
-        @NotBlank
+        @NotBlank(message = "Não deve ser vazio")
         String senha,
 
-        @NotNull
+        @NotNull(message = "Não deve ser vazio")
         Cargo cargo
 
 ) {

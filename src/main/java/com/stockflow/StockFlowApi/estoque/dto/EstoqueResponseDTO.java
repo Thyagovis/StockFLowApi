@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 public record EstoqueResponseDTO(
         Long id,
-        Long quantidadeAtual,
+        Long quantidadeDisponivel,
         Long quantidadeReservada,
         ProdutoSummaryDTO produto,
         LocalDateTime ultimaAtualizacao

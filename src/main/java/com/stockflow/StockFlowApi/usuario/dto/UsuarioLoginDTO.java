@@ -4,10 +4,10 @@ import jakarta.validation.constraints.NotBlank;
 
 public record UsuarioLoginDTO(
 
-        @NotBlank
+        @NotBlank(message = "Não deve ser vazio")
         String login,
 
-        @NotBlank
+        @NotBlank(message = "Não deve ser vazio")
         String senha
 
 ) {

@@ -3,24 +3,25 @@ package com.stockflow.StockFlowApi.produto.dto;
 import com.stockflow.StockFlowApi.shared.costraints.NullOrNotBlank;
 import jakarta.validation.constraints.Positive;
 
+
 public record ProdutoPatchDTO(
 
-        @NullOrNotBlank
+        @NullOrNotBlank(message = "Não pode ser vazio")
         String codigo,
 
-        @NullOrNotBlank
+        @NullOrNotBlank(message = "Não pode ser vazio")
         String nome,
 
-        @NullOrNotBlank
+        @NullOrNotBlank(message = "Não pode ser vazio")
         String descricao,
 
-        @Positive(message = "Não pode ser negativo")
+        @Positive(message = "Deve ser positivo")
         Long estoqueMinimo,
 
-        @Positive(message = "Não pode ser negativo")
+        @Positive(message = "Deve ser positivo")
         Long estoqueMaximo,
 
-        @Positive
+        @Positive(message = "Deve ser positivo")
         Long categoriaId,
 
         Boolean ativo

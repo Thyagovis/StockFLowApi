@@ -10,10 +10,10 @@ public record EstoqueMovementDTO(
         @Positive(message = "Não pode ser negativo")
         Long produtoId,
 
-        @NotNull
+        @NotNull(message = "Não pode ser nulo")
         Long quantidadeMovimentada,
 
-        @NotNull
+        @NotNull(message = "Não pode ser nulo")
         TipoMovimentacao tipoMovimentacao
 
 ) {

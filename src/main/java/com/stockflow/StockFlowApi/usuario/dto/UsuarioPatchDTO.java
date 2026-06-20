@@ -6,17 +6,17 @@ import jakarta.validation.constraints.Email;
 
 public record UsuarioPatchDTO(
 
-        @NullOrNotBlank
+        @NullOrNotBlank(message = "Não deve ser vazio")
         String nome,
 
-        @NullOrNotBlank(message = "email não pode ser nulo")
-        @Email
+        @NullOrNotBlank(message = "Não deve ser vazio")
+        @Email(message = "Deve ser um email valido")
         String email,
 
-        @NullOrNotBlank
+        @NullOrNotBlank(message = "Não deve ser vazio")
         String login,
 
-        @NullOrNotBlank
+        @NullOrNotBlank(message = "Não deve ser vazio")
         String senha,
 
         Cargo cargo,

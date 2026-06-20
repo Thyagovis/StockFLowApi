@@ -2,6 +2,7 @@ package com.stockflow.StockFlowApi.usuario.controller;
 
 import com.stockflow.StockFlowApi.usuario.doc.UsuarioControllerDoc;
 import com.stockflow.StockFlowApi.usuario.dto.UsuarioPatchDTO;
+import com.stockflow.StockFlowApi.usuario.dto.UsuarioRegisterDTO;
 import com.stockflow.StockFlowApi.usuario.dto.UsuarioResponseDTO;
 import com.stockflow.StockFlowApi.usuario.service.UsuarioService;
 import jakarta.validation.Valid;
@@ -14,7 +15,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/usuarios")
+@RequestMapping("/api/usuarios")
 public class UsuarioController implements UsuarioControllerDoc {
 
     private final UsuarioService usuarioService;
@@ -31,6 +32,12 @@ public class UsuarioController implements UsuarioControllerDoc {
     public ResponseEntity<UsuarioResponseDTO> getById(@PathVariable Long id) {
         var usuario = usuarioService.findById(id);
         return ResponseEntity.status(HttpStatus.OK).body(usuario);
+    }
+
+    @PostMapping
+    public ResponseEntity<UsuarioResponseDTO> registrar(@RequestBody @Valid UsuarioRegisterDTO registerDTO) {
+        var response = usuarioService.saveUsuario(registerDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @DeleteMapping("/{id}")

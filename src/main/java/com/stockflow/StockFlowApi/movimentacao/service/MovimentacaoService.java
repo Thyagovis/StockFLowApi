@@ -8,7 +8,9 @@ import com.stockflow.StockFlowApi.movimentacao.dto.MovimentacaoMapper;
 import com.stockflow.StockFlowApi.movimentacao.dto.MovimentacaoLoteSummaryDTO;
 import com.stockflow.StockFlowApi.movimentacao.entity.ItemMovimentacao;
 import com.stockflow.StockFlowApi.movimentacao.entity.MovimentacaoLote;
+import com.stockflow.StockFlowApi.movimentacao.enums.TipoMovimentacao;
 import com.stockflow.StockFlowApi.movimentacao.repository.MovimentacaoLoteRepository;
+import com.stockflow.StockFlowApi.movimentacao.repository.MovimentacaoLoteSpec;
 import com.stockflow.StockFlowApi.produto.entity.Produto;
 import com.stockflow.StockFlowApi.produto.repository.ProdutoRepository;
 import com.stockflow.StockFlowApi.shared.exceptions.NotFoundException;
@@ -16,6 +18,7 @@ import com.stockflow.StockFlowApi.usuario.entity.Usuario;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -73,13 +76,17 @@ public class MovimentacaoService {
         return MovimentacaoMapper.toMovimentacaoResponseDTO(movimentacaoLoteRepository.save(movimentacao));
     }
 
-    public List<MovimentacaoLoteSummaryDTO> listAllSummary() {
-        return movimentacaoLoteRepository.findAll()
+    public List<MovimentacaoLoteSummaryDTO> listAllSummary(TipoMovimentacao tipo) {
+        var spec = Specification.where(MovimentacaoLoteSpec.comTipo(tipo));
+
+        return movimentacaoLoteRepository.findAll(spec)
                 .stream().map(MovimentacaoMapper::toMovimentacaoLoteSummaryDTO).toList();
     }
 
-    public List<MovimentacaoLoteResponseDTO> listAllFull() {
-        return movimentacaoLoteRepository.findAll()
+    public List<MovimentacaoLoteResponseDTO> listAllFull(TipoMovimentacao tipo) {
+        var spec = Specification.where(MovimentacaoLoteSpec.comTipo(tipo));
+
+        return movimentacaoLoteRepository.findAll(spec)
                 .stream().map(MovimentacaoMapper::toMovimentacaoResponseDTO).toList();
     }
 

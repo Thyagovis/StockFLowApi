@@ -7,13 +7,15 @@ import java.math.BigDecimal;
 
 public record ItemMovimentacaoRequestDTO(
 
-        @NotNull @Positive
+        @NotNull(message = "Não pode ser nulo")
+        @Positive(message = "Deve ser positivo")
         Long produtoId,
 
-        @NotNull
+        @NotNull(message = "Não pode ser nulo")
         Long quantidade,
 
-        @NotNull @Positive
+        @NotNull(message = "Não pode ser nulo")
+        @Positive(message = "Deve ser positivo")
         BigDecimal custoUnitario
 
 ) {

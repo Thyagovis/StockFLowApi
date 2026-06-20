@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/chamados")
+@RequestMapping("/api/chamados")
 @AllArgsConstructor
 public class ChamadoController {
 

@@ -16,15 +16,15 @@ public record ProdutoCreateDTO(
         String descricao,
 
         @NotNull(message = "Não pode ser nulo")
-        @Positive(message = "Não pode ser negativo")
+        @Positive(message = "Deve ser positivo")
         Long estoqueMaximo,
 
         @NotNull(message = "Não pode ser nulo")
-        @Positive(message = "Não pode ser negativo")
+        @Positive(message = "Deve ser positivo")
         Long estoqueMinimo,
 
         @NotNull(message = "Não pode ser nulo")
-        @Positive(message = "Não pode ser negativo")
+        @Positive(message = "Deve ser positivo")
         Long categoriaId
 
 ) {}
