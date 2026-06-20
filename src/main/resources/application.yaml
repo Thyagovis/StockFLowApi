@@ -1,6 +1,6 @@
 spring:
   config:
-    import: file:.env[.properties]
+    import: "optional:file:.env[.properties]"
 
   application:
     name: StockFlowApi
@@ -18,5 +18,5 @@ spring:
 security:
   jwt:
     secret: ${JWT_SECRET}
-    expiration: 10800
-    issuer: StockFlowApi
+    expiration: ${JWT_EXPIRATION}
+    issuer: ${JWT_ISSUER}
