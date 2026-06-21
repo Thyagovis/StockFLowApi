@@ -51,7 +51,7 @@ public class Estoque {
         }
 
         if (quantidade > quantidadeDisponivel) {
-            throw new IllegalArgumentException("Quantidade deve ser menor que quantidade");
+            throw new IllegalArgumentException("Quantidade ultrapassa o estoque disponível");
         }
 
         this.quantidadeDisponivel -= quantidade;
