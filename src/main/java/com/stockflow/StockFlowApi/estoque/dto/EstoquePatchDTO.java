@@ -1,13 +1,13 @@
 package com.stockflow.StockFlowApi.estoque.dto;
 
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Min;
 
 public record EstoquePatchDTO (
 
-        @Positive(message = "Deve ser positivo")
+        @Min(0)
         Long quantidadeDisponivel,
 
-        @Positive(message = "Deve ser positivo")
+        @Min(0)
         Long quantidadeReservada
 ) {
 
