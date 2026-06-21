@@ -53,9 +53,9 @@ public class SecurityConfiguration {
 
                         // Produtos
 
-                        .requestMatchers(HttpMethod.POST, "/api/produtos").hasAnyRole("ADMINISTRADOR", "GERENTE", "SUPERVISOR")
-                        .requestMatchers(HttpMethod.PATCH, "/api/produtos/**").hasAnyRole("ADMINISTRADOR")
-                        .requestMatchers(HttpMethod.DELETE, "/api/produtos/**").hasAnyRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.POST, "/api/produtos").hasAnyRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.PATCH, "/api/produtos/**").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.DELETE, "/api/produtos/**").hasRole("ADMINISTRADOR")
 
                         // Usuários
 
