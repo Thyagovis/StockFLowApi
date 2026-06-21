@@ -46,7 +46,15 @@ public class Estoque {
     }
 
     public void removerEstoque(Long quantidade) {
-        this.quantidadeReservada -= quantidade;
+        if (quantidade <= 0) {
+            throw new IllegalArgumentException("Quantidade deve ser maior que zero");
+        }
+
+        if (quantidade > quantidadeDisponivel) {
+            throw new IllegalArgumentException("Quantidade deve ser menor que quantidade");
+        }
+
+        this.quantidadeDisponivel -= quantidade;
     }
 
     public void reservar(Long quantidade) {
